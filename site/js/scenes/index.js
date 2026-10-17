@@ -2,5 +2,6 @@
 import mountains from "./mountains.js";
 import coast from "./coast.js";
 import landmark from "./landmark.js";
+import flights from "./flights.js";
 
-export const SCENES = [mountains, coast, landmark];
+export const SCENES = [mountains, coast, landmark, flights];
