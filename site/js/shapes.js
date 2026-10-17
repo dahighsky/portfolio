@@ -106,6 +106,14 @@ export function glyph(ch, x, y, s = 1) {
 /** Split-flap tile: outline plus the split. */
 export const flap = (x, y, w = 9, h = 13) => [rect(x, y, w, h), [[x, y + h / 2], [x + w, y + h / 2]]];
 
+/** Seven-segment digit (0–9) in a w×h box; "." draws a dot. */
+export function digit(d, x, y, w = 6, h = 10) {
+  if (d === ".") return [[[x + w / 2, y + h - 0.5], [x + w / 2 + 0.6, y + h]]];
+  const seg = { a: [[0, 0], [1, 0]], b: [[1, 0], [1, 0.5]], c: [[1, 0.5], [1, 1]], d: [[0, 1], [1, 1]], e: [[0, 0.5], [0, 1]], f: [[0, 0], [0, 0.5]], g: [[0, 0.5], [1, 0.5]] };
+  const on = ["abcdef", "bc", "abged", "abgcd", "fgbc", "afgcd", "afgedc", "abc", "abcdefg", "abfgcd"][+d];
+  return [...on].map(k => seg[k].map(([u, v]) => [x + u * w, y + v * h]));
+}
+
 /** Coin seen at an angle: rim and inner rim. */
 export const coin = (cx, cy, r) => [ellipse(cx, cy, r, r * 0.45), ellipse(cx, cy, r * 0.7, r * 0.3)];
 
