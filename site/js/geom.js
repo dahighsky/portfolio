@@ -66,7 +66,8 @@ export function makeLine({ ctrl, smooth: sm = true, rough = 0, seed = 1 }) {
     const a = p[Math.max(0, i - 1)], b = p[Math.min(N - 1, i + 1)];
     const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
     const d = rough * ((noise(i * 0.09, seed) - 0.5) * 2 + 0.4 * (noise(i * 0.4, seed + 9) - 0.5));
-    return [q[0] - dy / l * d, q[1] + dx / l * d];
+    const pin = Math.min(1, i / 10, (N - 1 - i) / 10); // ends stay put so lines that meet, meet
+    return [q[0] - dy / l * d * pin, q[1] + dx / l * d * pin];
   });
 }
 
