@@ -1,4 +1,4 @@
-// Single-stroke handwriting from an SVG font (EMS Allure, SIL OFL). Each glyph
+// Single-stroke handwriting from an SVG font (EMS Felix, SIL OFL). Each glyph
 // is a set of centre-line strokes, so text can be "written" one stroke at a time.
 
 export async function loadFont(url) {

@@ -96,7 +96,8 @@ body.words .dock:not(:focus-within) {
 }
 #words { opacity: 0; transition: opacity .3s; }
 #words.on { opacity: 1; }
-#words .hand { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+#words .inked { fill: var(--ink); }
+#words .hand { fill: none; stroke: var(--ink); stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
 #words .eyebrow-w { fill: var(--accent-text); font: 600 13px/1 system-ui, -apple-system, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
 #words .leader { fill: none; stroke: var(--ink); stroke-width: .9; opacity: .55; }
 #words .pin { fill: var(--paper); stroke: var(--accent); stroke-width: 1.6; }

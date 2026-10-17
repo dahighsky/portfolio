@@ -1,4 +1,5 @@
 import { loadFont, wrap, strokes } from "./handwriting.js";
+import { brush } from "./brush.js";
 
 const NS = "http://www.w3.org/2000/svg";
 const el = (tag, attrs = {}, parent) => {
@@ -42,16 +43,22 @@ export class Words {
     if (block.eyebrow) el("text", { x: left, y: y - size * 0.75, class: "eyebrow-w" }, this.g).textContent = block.eyebrow;
     const paths = [];
     for (const line of lines) {
-      for (const s of strokes(font, line, left, y, size)) if (s.length > 1) paths.push(el("path", { d: d(s), class: "hand" }, this.g));
+      for (const s of strokes(font, line, left, y, size)) if (s.length > 1) { const p = el("path", { d: d(s), class: "hand" }, this.g); p.pts = s; paths.push(p); }
       y += lh;
     }
+    // each stroke is written as a pen line, then swapped for its tapered brush shape
+    const ink = (p, i) => p.replaceWith(el("path", { d: brush(p.pts, 4.4, i), class: "inked" }));
     const total = paths.reduce((t, p) => t + p.getTotalLength(), 0), speed = Math.max(total / 1600, 0.6); // ≤ 1.6s per title
     let at = 0;
     for (const p of paths) {
       const len = p.getTotalLength();
       p.style.strokeDasharray = len;
       // opacity too: a round cap would otherwise show a dot before the stroke starts
-      if (!instant) p.animate([{ strokeDashoffset: len, opacity: 0 }, { strokeDashoffset: len, opacity: 1, offset: 0.001 }, { strokeDashoffset: 0, opacity: 1 }], { duration: len / speed, delay: at / speed, fill: "both", easing: "linear" });
+      if (instant) ink(p, at);
+      else {
+        const i = at, a = p.animate([{ strokeDashoffset: len, opacity: 0 }, { strokeDashoffset: len, opacity: 1, offset: 0.001 }, { strokeDashoffset: 0, opacity: 1 }], { duration: len / speed, delay: at / speed, fill: "both", easing: "linear" });
+        a.onfinish = () => p.isConnected && ink(p, i);
+      }
       at += len;
     }
     const written = instant ? 0 : at / speed;

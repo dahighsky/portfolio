@@ -39,7 +39,7 @@ On wide screens the words are drawn into the scene instead of shown in a card:
 - Each `<li>` becomes a label in the right margin, tied by a leader line to the scene's
   `anchors`, in order.
 
-Keep bullets short (one line reads best). The handwriting font is EMS Allure (SIL Open Font
+Keep bullets short (one line reads best). The handwriting font is EMS Felix (SIL Open Font
 License), in `site/fonts/`.
 
 ## Change the destination

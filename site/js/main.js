@@ -54,7 +54,7 @@ const content = cards.map(c => ({
   lede: c.querySelector(":scope > p:not(.eyebrow):not(.credit)")?.innerHTML ?? "",
   items: [...c.querySelectorAll("li")].map(e => ({ html: e.innerHTML })),
 }));
-words = new Words(svg, "fonts/EMSAllure.svg");
+words = new Words(svg, "fonts/EMSFelix.svg");
 
 let active = -1;
 function showCard(i) {
