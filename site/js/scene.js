@@ -5,7 +5,7 @@ const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0))
 // Builds a scene definition into geometry: five lines of N points, plus detail
 // strokes stored as (nearest parent point index, offset) pairs, so a detail can
 // melt onto its line (offset → 0) and grow back out of it.
-export function buildScene(def) {
+export function buildScene(def, { wings = false } = {}) {
   if (def.lines.length !== 5) throw new Error(`scene ${def.id}: expected 5 lines, got ${def.lines.length}`);
   const lines = def.lines.map(makeLine), det = [], r = rng(hash(def.id));
   const add = (parent, pts, tone = "det", wid = 1.3) => {
@@ -26,5 +26,6 @@ export function buildScene(def) {
     });
   };
   def.decorate(lines, add);
+  if (wings) def.wings?.(lines, add); // extra scenery for the margins of wide screens
   return { id: def.id, title: def.title, lines, det };
 }

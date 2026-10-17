@@ -10,9 +10,25 @@ for (const el of document.querySelectorAll("[data-copy]")) {
   if (text) el.textContent = text;
 }
 
-const scenes = SCENES.map(buildScene);
+// One drawing for every screen. Phones show the 400×860 scene as drawn; wide
+// screens widen the canvas to the window's shape, with the scene a little right
+// of centre (the text sits on the left) and extra scenery drawn in the margins.
 const svg = document.querySelector("#stage svg");
+const wideMQ = matchMedia("(min-width: 900px) and (min-aspect-ratio: 1/1)");
 const stage = new Stage(svg);
+const built = {};
+let scenes;
+function useLayout() {
+  const wide = wideMQ.matches, key = wide ? "wide" : "tall";
+  built[key] ??= SCENES.map(d => buildScene(d, { wings: wide }));
+  scenes = built[key];
+  if (wide) {
+    const w = 860 * innerWidth / innerHeight;
+    svg.setAttribute("viewBox", `${(200 - 0.6 * w).toFixed(1)} 0 ${w.toFixed(1)} 860`);
+  } else svg.setAttribute("viewBox", "0 0 400 860");
+  stage.cache.clear();
+}
+useLayout();
 const reduce = matchMedia("(prefers-reduced-motion: reduce)");
 const blocks = [...document.querySelectorAll("section.block[data-stop]")];
 
@@ -63,8 +79,9 @@ function update() {
 
 const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); };
 addEventListener("scroll", schedule, { passive: true });
-addEventListener("resize", measure);
+addEventListener("resize", () => { if (wideMQ.matches) useLayout(); measure(); });
 new ResizeObserver(measure).observe(document.querySelector("main"));
 document.fonts?.ready.then(measure);
 reduce.addEventListener("change", () => { shown = -1; svg.style.opacity = 1; update(); });
+wideMQ.addEventListener("change", () => { useLayout(); measure(); });
 measure();

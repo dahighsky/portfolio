@@ -1,6 +1,6 @@
 import { catmull } from "../geom.js";
 import { rng } from "../geom.js";
-import { glyph, flap, digit, coin, ellipse, put, arc } from "../shapes.js";
+import { glyph, flap, digit, coin, ellipse, put, arc, traveller, rect } from "../shapes.js";
 
 // An airport currency-exchange board. The five lines are its column dividers;
 // rows carry a currency glyph, split-flap buy and sell rates, and a trend tick.
@@ -53,5 +53,16 @@ export default {
     // the queue: a rope barrier
     for (const x of [30, 150, 270, 390]) put(add, x < 200 ? 0 : 4, [[[x, 880], [x, 812]], ellipse(x, 810, 4, 3)], "det", 1.2);
     add(0, catmull([[30, 814], [90, 838], [150, 814]]), "det", 1.1); add(4, catmull([[270, 814], [330, 838], [390, 814]]), "det", 1.1);
+  },
+  // wide screens: the hall around the board: the queue, more counters, more rates
+  wings(L, add) {
+    add(2, [[-1100, 744], [0, 744]], "det", 2); add(2, [[400, 744], [1400, 744]], "det", 2);
+    for (const x of [-520, -420, -330]) put(add, 0, traveller(x, 860, 1.6), "det", 1.2);
+    put(add, 0, [rect(-200, 820, 44, 40), [[-190, 820], [-190, 810], [-166, 810], [-166, 820]]], "det", 1.1);
+    for (let r = 0; r < 6; r++) { const y = 200 + r * 60; add(4, [[460, y], [760, y]], "tex", 0.9); put(add, 4, glyph(["$", "€", "£", "¥", "₹", "$"][r], 480, y + 12, 1.6), "pale", 1.2); add(4, [[560, y + 30], [700, y + 30]], "pale", 1.2); }
+    put(add, 4, [rect(440, 160, 340, 380)], "pale", 1.3);
+    for (const x of [500, 620, 740]) put(add, 4, [rect(x, 640, 90, 104), [[x, 676], [x + 90, 676]]], "det", 1);
+    for (let i = 0; i < 4; i++) put(add, 4, coin(560, 736 - i * 5, 11), "det", 1);
+    put(add, 0, glyph("€", -400, 200, 3), "pale", 1.4); put(add, 0, glyph("₹", -200, 380, 2.6), "pale", 1.4);
   },
 };

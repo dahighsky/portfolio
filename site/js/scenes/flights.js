@@ -48,4 +48,18 @@ export default {
     add(4, vbird(330, 60)); add(4, vbird(350, 48, 5));
     add(0, arc(70, 380, 14, 0, Math.PI * 2, 18), "pale", 1.2);
   },
+  // wide screens: more sky, more traffic, and the airport carrying on
+  wings(L, add) {
+    put(add, 0, cloud(-600, 120, 200, 21), "pale", 1.3);
+    put(add, 0, cloud(-320, 300, 150, 22), "pale", 1.3);
+    put(add, 4, cloud(480, 200, 220, 23), "det", 1.1);
+    put(add, 4, cloud(620, 420, 160, 24), "pale", 1.3);
+    add(0, [[-700, 60], [-160, 520]], "pale", 1); add(0, [[-660, 50], [-120, 510]], "pale", 0.8);
+    put(add, 0, plane(-660, 52, 14, -0.86), "det", 1.1);
+    add(4, [[900, 40], [460, 600]], "pale", 1); put(add, 4, plane(890, 52, 14, 0.67), "det", 1.1);
+    for (const x of [440, 560, 680]) put(add, 4, [rect(x, 760, 100, 50), [[x, 776], [x + 100, 776]], [[x + 30, 810], [x + 30, 786], [x + 70, 786], [x + 70, 810]]], "det", 1);
+    put(add, 4, plane(620, 840, 18, Math.PI / 2), "det", 1.1);
+    add(0, [[-1100, 820], [0, 820]], "tex", 1); add(4, [[400, 820], [1400, 820]], "tex", 1);
+    add(4, vbird(760, 120)); add(4, vbird(790, 106, 5));
+  },
 };

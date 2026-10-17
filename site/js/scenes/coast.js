@@ -1,5 +1,5 @@
-import { P, noise, catmull } from "../geom.js";
-import { tree, vbird, arc } from "../shapes.js";
+import { P, noise, rng, catmull } from "../geom.js";
+import { tree, vbird, arc, blob } from "../shapes.js";
 
 // A bay seen from the cliffs: tree line, dry sand, the water's edge (accent),
 // then two lines of breakers, all running off the top and bottom of the screen.
@@ -36,5 +36,15 @@ export default {
     }
     add(0, catmull([[0, 40], [40, 20], [90, 34], [130, 10]]), "pale", 1.4);
     add(4, vbird(330, 90)); add(4, vbird(352, 78, 5));
+  },
+  // wide screens: more shore to the left, open sea to the right
+  wings(L, add) {
+    const R = rng(23);
+    for (let i = 0; i < 26; i++) { const x = -60 - R() * 640, y = 20 + R() * 820; tree(x, y, 18 + R() * 22, i).forEach(p => add(0, p, R() < 0.5 ? "pale" : "tex")); }
+    for (const [x, y] of [[-200, 220], [-360, 520], [-140, 700]]) { add(0, [[x - 26, y], [x, y - 20], [x + 26, y]]); add(0, [[x - 20, y], [x - 20, y + 22], [x + 20, y + 22], [x + 20, y]]); }
+    for (let i = 0; i < 46; i++) { const x = 440 + R() * 420, y = R() * 860; add(4, arc(x, y, 8 + R() * 6, Math.PI * 1.1, Math.PI * 1.9, 6), "tex", 1); }
+    for (const [x, y] of [[520, 160], [680, 420], [560, 680]]) { add(4, catmull([[x, y - 16], [x + 6, y - 4], [x + 6, y + 10], [x, y + 16], [x - 6, y + 10], [x - 6, y - 4], [x, y - 16]])); add(4, [[x, y + 18], [x - 4, y + 44]], "tex", 0.8); }
+    add(4, blob(760, 300, 40, 18, 7), "pale", 1.4); add(4, blob(820, 560, 26, 12, 9), "pale", 1.4);
+    add(4, vbird(560, 60)); add(4, vbird(590, 48, 5)); add(0, vbird(-300, 80));
   },
 };

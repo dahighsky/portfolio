@@ -55,4 +55,14 @@ export default {
     // the clock that runs the batch jobs
     put(add, 4, [ellipse(360, 200, 14, 14), [[360, 200], [360, 191]], [[360, 200], [367, 204]]], "pale", 1.3);
   },
+  // wide screens: more sources pouring in from the sides, more stores below
+  wings(L, add) {
+    for (let i = 0; i < 6; i++) { const x0 = -700 + i * 110; add(0, catmull([[x0, 0], [x0 + 60, 180], [60, 340], [130, 412]]), "pale", 0.9); }
+    for (let i = 0; i < 6; i++) { const x0 = 520 + i * 70; add(4, catmull([[x0, 0], [x0 - 40, 180], [340, 340], [270, 412]]), "pale", 0.9); }
+    for (const x of [-560, -340]) { add(0, rect(x, 40, 34, 46), "det", 1); add(0, [[x + 4, 54], [x + 30, 54]], "tex", 1); }
+    put(add, 4, plane(560, 60, 22, Math.PI), "det", 1.2);
+    put(add, 4, [rect(680, 46, 30, 40), [[684, 58], [706, 58]]], "det", 1);
+    for (const x of [-480, -360, 520, 640]) for (const y of [760, 790, 820]) put(add, x < 0 ? 0 : 4, cylinder(x, y, 46, 22), "pale", 1.1);
+    put(add, 4, [ellipse(560, 300, 18, 18), [[560, 300], [560, 288]], [[560, 300], [568, 306]]], "pale", 1.3);
+  },
 };

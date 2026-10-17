@@ -52,6 +52,9 @@ A scene is a file in `site/js/scenes/` exporting `{ id, title, lines, decorate }
   `add(parent, points, tone, width)` to attach a stroke to line `parent` (0–4), where `tone` is
   `"det"`, `"tex"` (texture) or `"pale"` (distance). Each stroke melts onto its parent line
   during a transition, so attach it to the line it visually belongs to.
+- `wings(L, add)` (optional): extra scenery for wide screens only. There the canvas widens to the
+  window's shape, with the scene a little right of centre and the text on the left. Draw into
+  x < 0 (keep it sparse, it sits under the text) and x > 400. Phones never build it.
 - Shape helpers (trees, clouds, planes, glyphs, cylinders, stamps and so on) are in
   `site/js/shapes.js`.
 

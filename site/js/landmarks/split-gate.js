@@ -1,5 +1,5 @@
 import { N, P, catmull, lerp } from "../geom.js";
-import { blob, tree, vbird } from "../shapes.js";
+import { blob, tree, vbird, put } from "../shapes.js";
 
 const TOP = 226, SHOULDER = 300, BASE = 560;
 
@@ -53,5 +53,16 @@ export default function splitGate({ tiers = 4 } = {}) {
     for (const [k, dx] of [[1, 24], [3, -24]]) { const q = P(L[k], 0.9); add(k, blob(q[0] + dx, q[1], 8, 4, k * 3, 10)); add(k, [[q[0] + dx, q[1] - 4], [q[0] + dx, q[1] - 14]], "det", 0.8); } // offerings
     add(2, vbird(170, 120)); add(2, vbird(232, 96, 5));
   }
-  return { lines, decorate };
+  // wide screens: rice terraces stepping away to the left, palms and a shrine to the right
+  function wings(L, add) {
+    for (let k = 0; k < 7; k++) { const y = 420 + k * 56; add(0, catmull([[-1100, y + 20], [-800, y - 10], [-500, y + 14], [-200, y - 6], [0, y + 10]]), k % 2 ? "tex" : "det", 1.1); }
+    for (let k = 0; k < 18; k++) { const x = -1000 + k * 55, y = 470 + (k % 7) * 56; add(0, [[x, y], [x + 4, y - 10]], "tex", 1); }
+    for (const x of [470, 640]) { const b = 690;
+      add(4, Array.from({ length: 10 }, (_, i) => { const t = i / 9; return [x - 24 * t * t, b - 240 * t]; }));
+      const top = [x - 24, b - 240];
+      for (const [dx, dy] of [[-80, 30], [-60, 70], [70, 24], [80, 66], [0, 70]]) add(4, [top, [top[0] + dx * 0.5, top[1] + dy * 0.2 - 20], [top[0] + dx, top[1] + dy]]); }
+    put(add, 4, [[[740, 600], [800, 560], [860, 600]], [[750, 600], [750, 660], [850, 660], [850, 600]], [[790, 660], [790, 630], [810, 630], [810, 660]]], "det", 1.1);
+    add(0, catmull([[-700, 220], [-560, 140], [-500, 130], [-380, 230]]), "pale", 1.6);
+  }
+  return { lines, decorate, wings };
 }

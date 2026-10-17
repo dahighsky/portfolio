@@ -1,5 +1,5 @@
 import { P, rng, lerp, catmull } from "../geom.js";
-import { blob, arc, vbird, put } from "../shapes.js";
+import { blob, arc, vbird, put, tree } from "../shapes.js";
 
 // Open source: a commit graph whose branches peel off main and merge back, and
 // which, read as a whole, is a tree: branches above, a trunk and roots below.
@@ -44,5 +44,14 @@ export default {
     add(4, catmull([[290, 606], [322, 566], [350, 586], [376, 552], [404, 596]]), "pale", 1.5);
     add(4, arc(352, 64, 18, 0, Math.PI * 2, 22), "pale", 1.3);
     add(0, vbird(60, 40)); add(0, vbird(82, 28, 5));
+  },
+  // wide screens: a forest grows out to either side
+  wings(L, add) {
+    for (const [x, h] of [[-640, 160], [-460, 220], [-260, 180], [-100, 120]]) tree(x, 844, h, -x).forEach(p => add(0, p, "pale"));
+    for (const [x, h] of [[480, 140], [620, 240], [780, 170], [940, 130]]) tree(x, 844, h, x).forEach(p => add(4, p, "pale"));
+    add(0, [[-1100, 844], [0, 844]], "tex", 1); add(4, [[400, 844], [1400, 844]], "tex", 1);
+    add(0, catmull([[-1100, 640], [-860, 560], [-620, 610], [-400, 540], [-120, 600]]), "pale", 1.5);
+    add(4, catmull([[440, 600], [640, 540], [860, 580], [1100, 520], [1400, 580]]), "pale", 1.5);
+    add(4, vbird(540, 120)); add(4, vbird(570, 106, 5));
   },
 };

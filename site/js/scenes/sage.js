@@ -1,5 +1,5 @@
 import { rng } from "../geom.js";
-import { rect, rrect, ellipse, arc, stamp, glyph, traveller, blob, put } from "../shapes.js";
+import { rect, rrect, ellipse, arc, stamp, glyph, traveller, blob, put, plane } from "../shapes.js";
 
 // Expenses and corporate cards: a receipt unrolls down the middle (lines 1 and 3
 // are its sides, the accent line its perforated tear), cards fan out to the left,
@@ -62,5 +62,16 @@ export default {
     for (let i = 0; i < 3; i++) add(0, ellipse(52, 400 - i * 5, 14, 6), "det", 1);
     add(0, [[22, 470], [96, 430]], "det", 1.8); add(0, [[96, 430], [102, 427]], "det", 1);
     add(0, blob(30, 820, 12, 6, 3), "det", 1);
+  },
+  // wide screens: more of the paperwork: older receipts, a laptop report, a ticket
+  wings(L, add) {
+    for (const [x, a] of [[-420, -0.08], [-260, 0.05]]) { const pts = rect(x, 120, 120, 300).map(([px, py]) => [x + (px - x) * Math.cos(a) - (py - 120) * Math.sin(a), 120 + (px - x) * Math.sin(a) + (py - 120) * Math.cos(a)]);
+      add(0, pts, "pale", 1.2); for (let y = 150; y < 400; y += 24) add(0, [[x + 14, y + (x + 14 - x) * Math.sin(a)], [x + 90, y + 76 * Math.sin(a)]], "pale", 1); }
+    put(add, 4, [rrect(440, 200, 300, 190, 8), [[420, 400], [760, 400]], [[420, 400], [440, 390]], [[760, 400], [740, 390]]], "det", 1.1);
+    for (let r = 0; r < 6; r++) { add(4, [[464, 228 + r * 24], [600, 228 + r * 24]], "tex", 1); add(4, [[660, 228 + r * 24], [716, 228 + r * 24]], "det", 1); }
+    put(add, 4, stamp(700, 520, 22), "det", 1.2);
+    put(add, 4, [rrect(470, 620, 230, 90, 8), [[630, 620], [630, 710]]], "det", 1.1);
+    put(add, 4, plane(560, 664, 22, -Math.PI / 2), "det", 1.1);
+    add(4, [[640, 650], [690, 650]], "tex", 1); add(4, [[640, 676], [680, 676]], "tex", 1);
   },
 };

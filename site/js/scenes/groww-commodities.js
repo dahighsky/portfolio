@@ -48,4 +48,14 @@ export default {
     // a gold coin and an oil drop as quiet emblems, low left
     add(0, catmull([[30, 560], [24, 576], [30, 586], [36, 576], [30, 560]]), "det", 1.2);
   },
+  // wide screens: the oilfield and the vault carry on
+  wings(L, add) {
+    for (const [x, h] of [[-560, 80], [-380, 110], [-200, 70]]) add(0, [[x - 18, 560], [x, 560 - h], [x + 18, 560]], "pale", 1.3);
+    add(0, [[-1100, 562], [0, 562]], "pale", 1.2);
+    for (const x of [-480, -300]) { const y = 840; put(add, 0, [[[x, y], [x + 16, y - 40], [x + 32, y]], [[x - 18, y - 46], [x + 56, y - 36]], ellipse(x - 22, y - 42, 7, 10)], "det", 1.1); }
+    for (const [cx, w] of [[500, 120], [680, 90]]) put(add, 4, cylinder(cx, 600, w, 160, 3), "det", 1.1);
+    for (let r = 0; r < 3; r++) for (let i = 0; i <= r; i++) put(add, 4, goldBar(560 + i * 44 - r * 22, 780 + r * 26 - 52, 40, 16), "det", 1);
+    add(4, [[400, 852], [1400, 852]], "tex", 1); add(0, [[-1100, 852], [0, 852]], "tex", 1);
+    add(4, arc(760, 140, 30, 0, Math.PI * 2, 24), "pale", 1.4);
+  },
 };
