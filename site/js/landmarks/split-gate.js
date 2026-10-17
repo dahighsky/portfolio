@@ -17,8 +17,12 @@ function towerEdge(cx, side, tiers, foot) {
 const mirror = pts => pts.map(([x, y]) => [400 - x, y]);
 const atY = (L, y) => { const i = L.findIndex(q => q[1] >= y); return L[i < 0 ? N - 1 : i]; };
 
+splitGate.params = ["tiers"];
+
 // Candi bentar: a gate split in two, the accent line running up the stair path between.
 export default function splitGate({ tiers = 4 } = {}) {
+  if (!Number.isInteger(tiers) || tiers < 1 || tiers > 8)
+    throw new Error(`destination.landmark.params.tiers must be an integer 1–8, got ${JSON.stringify(tiers)}`);
   const outer = towerEdge(124, -1, tiers, x => [[x - 10, 700], [40, 860]]);
   const inner = towerEdge(124, 1, tiers, x => [[x - 10, 700], [150, 860]]);
   const lines = [

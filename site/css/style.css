@@ -2,7 +2,8 @@
   --paper: #e8dcc4;
   --frame: #d6c9ae;
   --ink: #1f2a3d;
-  --soft: #6b6a5e;
+  --soft: #4f4e45;          /* ≥ 4.5:1 on the card even over ink */
+  --accent-text: #0a5a44;   /* the accent, darkened for small text */
   --accent: #0f7a5c;
   --strip: min(100vw, 430px);
   color-scheme: light;
@@ -21,7 +22,7 @@ body {
    middle like a scroll on a wall. */
 #stage {
   position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-  width: var(--strip); height: 100vh; height: 100svh; overflow: hidden;
+  width: var(--strip); height: 100vh; height: 100lvh; overflow: hidden; /* lvh: still fills when phone toolbars hide */
   background-color: var(--paper);
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .18 0 0 0 .3 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
@@ -48,7 +49,7 @@ section.block {
 }
 .card {
   padding: 16px 18px; border-radius: 12px;
-  background: color-mix(in srgb, var(--paper) 84%, transparent);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
   -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
   border: 1px solid rgba(31, 42, 61, .14);
 }
@@ -59,7 +60,7 @@ h3 { font-weight: 600; font-size: 1rem; margin: 0 0 .15rem; }
 p { margin: 0 0 .6rem; }
 p:last-child { margin-bottom: 0; }
 .quiet { color: var(--soft); }
-.eyebrow { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: .35rem; font-weight: 600; }
+.eyebrow { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text); margin-bottom: .35rem; font-weight: 600; }
 a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 .links { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; padding: 0; margin: .9rem 0 0; list-style: none; }

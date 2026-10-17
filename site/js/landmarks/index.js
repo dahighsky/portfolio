@@ -8,5 +8,8 @@ export function resolveDestination(cfg) {
     if (cfg?.[field] == null) throw new Error(`destination.${field} is required`);
   const make = LANDMARKS[cfg.landmark.type];
   if (!make) throw new Error(`destination.landmark.type "${cfg.landmark.type}" is not one of: ${Object.keys(LANDMARKS).join(", ")}`);
-  return make(cfg.landmark.params ?? {});
+  const params = cfg.landmark.params ?? {};
+  for (const key of Object.keys(params))
+    if (!make.params.includes(key)) throw new Error(`destination.landmark.params.${key} is not a setting of "${cfg.landmark.type}"; use one of: ${make.params.join(", ")}`);
+  return make(params);
 }
