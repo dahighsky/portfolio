@@ -14,6 +14,8 @@ export function buildScene(def) {
     det.push({
       tone, wid, seed: r() * 99, delay: r() * 0.45, parent,
       pts: pts.map(q => {
+        if (!Array.isArray(q) || q.length !== 2 || !Number.isFinite(q[0]) || !Number.isFinite(q[1]))
+          throw new Error(`scene ${def.id}: detail points must be finite [x, y] pairs, got ${JSON.stringify(q)}`);
         let bi = 0, bd = Infinity;
         for (let i = 0; i < N; i++) {
           const d = (L[i][0] - q[0]) ** 2 + (L[i][1] - q[1]) ** 2;
