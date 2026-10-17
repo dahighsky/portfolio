@@ -7,5 +7,6 @@ import forex from "./forex.js";
 import growwCommodities from "./groww-commodities.js";
 import growwTerminal from "./groww-terminal.js";
 import mastercard from "./mastercard.js";
+import sage from "./sage.js";
 
-export const SCENES = [mountains, coast, landmark, flights, forex, growwCommodities, growwTerminal, mastercard];
+export const SCENES = [mountains, coast, landmark, flights, forex, growwCommodities, growwTerminal, mastercard, sage];
