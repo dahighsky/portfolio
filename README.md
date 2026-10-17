@@ -1,13 +1,18 @@
 # Portfolio: five lines
 
-A portrait, scroll-driven ink drawing. Five vertical lines flow through ten scenes, and the
+A portrait, scroll-driven ink drawing. Five vertical lines flow through eight scenes, and the
 story is written over them:
-- mountains, coast and a landmark (the travel startup)
-- flights and forex
-- Groww commodities and the trading terminal
-- Mastercard's ETL matching
-- Sage (formerly Fyle) expenses
-- open source
+
+| Scene | Section |
+|---|---|
+| Mountains | Hero |
+| Beach | Now |
+| Flights | The travel startup |
+| A commodities rate board | Groww commodities |
+| Phone and trading terminal | Groww web and app |
+| An ETL matching pipeline | Mastercard |
+| Receipts, cards and approvals | Fyle (now Sage) |
+| A commit graph that becomes a tree | Open source |
 
 As you scroll, each scene's detail melts into the lines, the lines flow into the next shape, and
 the new detail grows back out. The brush style follows LingDong's
@@ -29,7 +34,7 @@ Then open http://localhost:8000. To try it on your phone, use your laptop's IP o
 
 All copy is in `site/index.html`, one `<section class="block" data-stop="N">` per scene. `N` is
 the scene that block sits over (see the order in `site/js/scenes/index.js`). Several blocks can
-share a stop. Hero and Now both sit over the mountains.
+share a stop.
 
 On wide screens the words are drawn into the scene instead of shown in a card:
 - The title (`h1`/`h2`) is handwritten into the left margin, stroke by stroke, when the scene
@@ -41,17 +46,6 @@ On wide screens the words are drawn into the scene instead of shown in a card:
 
 Keep bullets short (one line reads best). The handwriting font is EMS Felix (SIL Open Font
 License), in `site/fonts/`.
-
-## Change the destination
-
-Edit `site/js/config.js`: the name, the landmark type and its params, and the travel copy.
-
-To add a new kind of landmark:
-1. Write `site/js/landmarks/<type>.js`, exporting `(params) => ({ lines, decorate })`.
-2. Register it in `site/js/landmarks/index.js`.
-3. Name it in the config.
-
-A typo in the type fails with a message listing the valid ones.
 
 ## Add or change a scene
 

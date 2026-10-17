@@ -151,3 +151,23 @@ export function traveller(x, y, s = 1) {
     S([[0, -26], [9, -18]]), S([[9, -18], [12, -10]]), S(rect(8, -10, 10, 10)), S([[10, 0], [10, 1.5]]), S([[16, 0], [16, 1.5]]),
   ];
 }
+
+// ---------- commodity marks ----------
+
+/** A drop of crude. */
+export const oilDrop = (x, y, s = 1) => [[[x, y - 9 * s], [x - 3.5 * s, y - 2 * s], [x - 5.5 * s, y + 2.5 * s], [x - 4 * s, y + 6.5 * s], [x, y + 8 * s], [x + 4 * s, y + 6.5 * s], [x + 5.5 * s, y + 2.5 * s], [x + 3.5 * s, y - 2 * s], [x, y - 9 * s]]];
+
+/** A gas flame, with an inner tongue. */
+export const flame = (x, y, s = 1) => [
+  [[x - 1 * s, y - 10 * s], [x + 4 * s, y - 3 * s], [x + 6 * s, y + 3 * s], [x + 3 * s, y + 8 * s], [x - 3 * s, y + 8 * s], [x - 6 * s, y + 3 * s], [x - 4 * s, y - 2 * s], [x - 2 * s, y + 1 * s], [x - 1 * s, y - 10 * s]],
+  [[x, y - 1 * s], [x + 2.5 * s, y + 4 * s], [x, y + 7 * s], [x - 2.5 * s, y + 4 * s], [x, y - 1 * s]],
+];
+
+/** A coil of copper wire. */
+export const coil = (x, y, s = 1) => [0, 1, 2].map(k => ellipse(x - 4 * s + k * 4 * s, y, 3.2 * s, 7 * s, 0, Math.PI * 2, 12)).concat([[[x + 4 * s, y + 7 * s], [x + 9 * s, y + 9 * s]]]);
+
+/** Silver: two small bars, one on the other, with a shine mark. */
+export const silverBars = (x, y, s = 1) => [...goldBar(x - 9 * s, y + 1 * s, 18 * s, 6 * s), ...goldBar(x - 6 * s, y - 6 * s, 12 * s, 5 * s), [[x + 5 * s, y - 9 * s], [x + 8 * s, y - 12 * s]]];
+
+/** The commodity marks in board order: gold, silver, crude, natural gas, copper. */
+export const COMMODITIES = [(x, y, s = 1) => goldBar(x - 9 * s, y - 2 * s, 18 * s, 7 * s), silverBars, oilDrop, flame, coil];

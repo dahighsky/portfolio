@@ -14,9 +14,11 @@ function candles(add, parent, x0, x1, yTop, yBot, n, seed, wid = 1) {
   }
 }
 
+const PHONE = { top: 150, bot: 402 }; // about 116 × 252: a phone's proportions
+
 // One side of the phone, from the top centre round the corners to the bottom centre.
 const phoneEdge = side => {
-  const cx = 90, hw = 58, r = 14, top = 112, bot = 548, x = a => cx + side * a;
+  const cx = 90, hw = 58, r = 14, top = PHONE.top, bot = PHONE.bot, x = a => cx + side * a;
   const corner = (cy, a0, a1) => Array.from({ length: 5 }, (_, i) => { const a = a0 + (a1 - a0) * i / 4; return [x(hw - r + r * Math.cos(a)), cy + r * Math.sin(a)]; });
   return [[cx, top], ...corner(top + r, -Math.PI / 2, 0), ...corner(bot - r, 0, Math.PI / 2), [cx, bot]];
 };
@@ -33,16 +35,17 @@ export default {
   ],
   decorate(L, add) {
     // phone: speaker, header with a gold ticker and price, chart, buy/sell, home bar
-    add(0, [[76, 128], [104, 128]], "det", 1.4);
-    put(add, 0, goldBar(44, 156, 22, 8), "det", 1);
-    add(0, [[72, 156], [112, 156]], "tex", 1); add(1, [[72, 166], [100, 166]], "tex", 1);
-    [..."71240"].forEach((d, i) => put(add, i < 3 ? 0 : 1, digit(d, 44 + i * 13, 182, 9, 16), "det", 1.3));
-    add(1, tick(126, 192, 8), "det", 1);
-    candles(add, 0, 40, 140, 220, 380, 9, 7);
-    for (let i = 0; i < 9; i++) add(i < 5 ? 0 : 1, [[45 + i * 11, 420], [45 + i * 11, 420 - 6 - (i * 13) % 14]], "tex", 1.2);
-    put(add, 0, [rrect(40, 462, 48, 26, 6)], "det", 1.1); put(add, 1, [rrect(92, 462, 48, 26, 6)], "det", 1.1);
-    add(0, [[54, 475], [74, 475]], "det", 1.4); add(1, [[106, 475], [126, 475]], "det", 1.4);
-    add(0, [[70, 526], [110, 526]], "det", 1.2);
+    const t = PHONE.top, b = PHONE.bot;
+    add(0, [[78, t + 12], [102, t + 12]], "det", 1.4);
+    put(add, 0, goldBar(44, t + 30, 20, 7), "det", 1);
+    add(0, [[70, t + 30], [110, t + 30]], "tex", 1); add(1, [[70, t + 39], [98, t + 39]], "tex", 1);
+    [..."71240"].forEach((d, i) => put(add, i < 3 ? 0 : 1, digit(d, 44 + i * 12, t + 50, 8, 14), "det", 1.3));
+    add(1, tick(126, t + 58, 8), "det", 1);
+    candles(add, 0, 40, 140, t + 76, t + 170, 9, 7);
+    for (let i = 0; i < 9; i++) add(i < 5 ? 0 : 1, [[45 + i * 11, t + 192], [45 + i * 11, t + 188 - (i * 13) % 10]], "tex", 1.2);
+    put(add, 0, [rrect(40, b - 50, 48, 22, 6)], "det", 1.1); put(add, 1, [rrect(92, b - 50, 48, 22, 6)], "det", 1.1);
+    add(0, [[54, b - 39], [74, b - 39]], "det", 1.4); add(1, [[106, b - 39], [126, b - 39]], "det", 1.4);
+    add(0, [[72, b - 12], [108, b - 12]], "det", 1.2);
     // terminal: tabs, candle chart with an average, order book, positions
     for (let i = 0; i < 3; i++) put(add, 3, [rrect(218 + i * 44, 134, 40, 14, 4)], i === 0 ? "det" : "tex", 1);
     put(add, 3, goldBar(222, 140, 10, 4), "det", 0.9);

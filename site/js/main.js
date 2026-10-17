@@ -3,13 +3,7 @@ import { frameAt } from "./morph.js";
 import { buildStops, progressAt } from "./scroll.js";
 import { Stage } from "./render.js";
 import { SCENES } from "./scenes/index.js";
-import { DESTINATION } from "./config.js";
 import { Words } from "./words.js";
-
-for (const el of document.querySelectorAll("[data-copy]")) {
-  const key = el.dataset.copy, text = key === "name" ? DESTINATION.name : DESTINATION.copy[key];
-  if (text) el.textContent = text;
-}
 
 // One drawing for every screen, always edge to edge. Phones show the 400×860
 // scene as drawn; wider screens widen the canvas to the window's shape and draw
