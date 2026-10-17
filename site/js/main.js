@@ -3,6 +3,12 @@ import { frameAt } from "./morph.js";
 import { buildStops, progressAt } from "./scroll.js";
 import { Stage } from "./render.js";
 import { SCENES } from "./scenes/index.js";
+import { DESTINATION } from "./config.js";
+
+for (const el of document.querySelectorAll("[data-copy]")) {
+  const key = el.dataset.copy, text = key === "name" ? DESTINATION.name : DESTINATION.copy[key];
+  if (text) el.textContent = text;
+}
 
 const scenes = SCENES.map(buildScene);
 const svg = document.querySelector("#stage svg");
