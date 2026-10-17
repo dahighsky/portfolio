@@ -1,4 +1,4 @@
-import { N, rng, lerp, noise, catmull } from "../geom.js";
+import { N, rng, lerp, noise, catmull, makeLine } from "../geom.js";
 import { vbird, pine } from "../shapes.js";
 
 // An alpine peak in pen and ink: jagged skylines (lines 0 and 1), three ridges
@@ -21,7 +21,7 @@ function jagged(pts, seed, amp = 7, kinks = 3) {
   return out;
 }
 
-const S = [205, 112]; // summit
+const S = [201, 109]; // summit
 
 // x of a top-to-bottom line at height y (nearest sample), or null outside its span.
 function xAt(L, y) {
@@ -31,12 +31,13 @@ function xAt(L, y) {
   return L[b][0];
 }
 
-// Parallel hatching across the face between a ridge (from) and a boundary (to):
+// Parallel hatching across the face between a ridge (from: a line index, or [parent, points])
+// and a boundary (to: a line index or points):
 // from each point along the ridge a stroke runs in direction dir until it meets
 // the boundary, broken into pen-lifted segments. density: share of rows drawn.
 // facets: leave seeded bands unhatched, so the face breaks into lit slabs and shadowed ones.
 function hatchFace(add, L, from, to, dir, { s0 = 0.02, s1 = 0.98, step = 3.4, seed = 1, maxLen = 260, tone = "det", wid = 0.8, density = 1, fade = 0, facets = 0 } = {}) {
-  const r = rng(seed), A = L[from], B = to == null ? null : L[to];
+  const r = rng(seed), A = Array.isArray(from) ? from[1] : L[from], parent = Array.isArray(from) ? from[0] : from, B = to == null ? null : Array.isArray(to) ? to : L[to];
   const [dx, dy] = (l => [dir[0] / l, dir[1] / l])(Math.hypot(...dir));
   for (let i = Math.round(s0 * (N - 1)); i < s1 * (N - 1); i += step * (0.7 + r() * 0.6)) {
     if (r() > density) continue;
@@ -52,9 +53,9 @@ function hatchFace(add, L, from, to, dir, { s0 = 0.02, s1 = 0.98, step = 3.4, se
       if (y > 862 || x < -40 || x > 440) break;
       seg.push([x, y]);
       x += dx * 3; y += dy * 3; len += 3;
-      if (seg.length > 3 && r() < 0.035) { add(from, seg.splice(0), tone, wid); } // pen lift
+      if (seg.length > 3 && r() < 0.035) { add(parent, seg.splice(0), tone, wid); } // pen lift
     }
-    if (seg.length > 1) add(from, seg, tone, wid);
+    if (seg.length > 1) add(parent, seg, tone, wid);
   }
 }
 
@@ -73,52 +74,56 @@ function dashes(add, L, a, b, parent, count, seed, dir = [0.55, 1]) {
 export default {
   id: "mountains",
   title: "Mountains",
+  // traced from the owner's sketch: a broad massif, stepped skylines with sub-peaks
+  // either side, and steep ridges falling almost straight down
   lines: [
-    { ctrl: jagged([S, [176, 172], [158, 186], [140, 246], [104, 280], [86, 330], [44, 372], [22, 430], [-12, 500]], 2, 8), smooth: false },
-    { ctrl: jagged([S, [236, 170], [258, 212], [292, 246], [326, 326], [350, 338], [380, 404], [412, 438]], 3, 7), smooth: false },
-    { ctrl: jagged([S, [192, 196], [176, 270], [150, 352], [122, 446], [86, 552], [48, 676], [14, 860]], 4, 9, 4), smooth: false },
-    { ctrl: jagged([[238, 172], [232, 262], [214, 352], [188, 456], [168, 566], [156, 700], [148, 860]], 5, 8, 4), smooth: false },
-    { ctrl: jagged([[326, 326], [304, 430], [284, 540], [270, 650], [272, 860]], 6, 7, 4), smooth: false },
+    { ctrl: jagged([S, [183, 159], [161, 193], [138, 196], [134, 233], [108, 226], [82, 217], [76, 342], [45, 366], [29, 382], [16, 413], [-13, 461], [-30, 540]], 2, 6), smooth: false },
+    { ctrl: jagged([S, [225, 164], [246, 212], [273, 249], [286, 276], [305, 286], [315, 270], [326, 297], [336, 329], [347, 371], [347, 424], [368, 408], [381, 371], [381, 318], [400, 339], [432, 371], [453, 413], [485, 440], [530, 476]], 3, 5), smooth: false },
+    { ctrl: jagged([[134, 233], [153, 297], [156, 371], [151, 413], [161, 504], [140, 583], [136, 700], [132, 860]], 4, 6, 3), smooth: false },
+    { ctrl: jagged([[250, 196], [236, 239], [233, 339], [238, 398], [230, 517], [224, 640], [222, 860]], 5, 6, 3), smooth: false },
+    { ctrl: jagged([[347, 424], [315, 477], [302, 530], [299, 572], [297, 640], [296, 860]], 6, 5, 3), smooth: false },
   ],
   decorate(L, add) {
-    // the big shadow face west of the accent ridge: dense hatching down to the left skyline
-    hatchFace(add, L, 2, 0, [-0.62, 1], { seed: 11, step: 1.7, wid: 1, maxLen: 300, facets: 0.3, fade: 0.45 });
-    hatchFace(add, L, 2, 0, [-0.62, 1], { s1: 0.5, seed: 17, step: 2.6, wid: 0.9, maxLen: 90, density: 0.9 }); // the dark core under the summit
-    hatchFace(add, L, 2, 0, [-0.4, 1], { seed: 16, step: 3.4, wid: 0.7, maxLen: 160, density: 0.6, tone: "tex" }); // a second, cross-angled pass
-    // shadow under ridge 3 (its west flank), fading into the lit face toward ridge 2
-    hatchFace(add, L, 3, 2, [-0.5, 1], { seed: 13, step: 2.4, wid: 0.9, maxLen: 80, density: 0.9, facets: 0.25 });
-    // shadow under ridge 4, and a band of rock under the right skyline's shoulder
-    hatchFace(add, L, 4, 3, [-0.45, 1], { seed: 14, step: 2.6, wid: 0.9, maxLen: 60, density: 0.9, facets: 0.25 });
-    hatchFace(add, L, 1, 4, [-0.35, 1], { s0: 0.42, s1: 0.62, seed: 15, step: 3.2, wid: 0.75, maxLen: 40 });
-    // spurs: short rocky ridgelets running down-right off the ridges, each with a hatched shadow beneath
+    // the cliff ridge dropping from the left sub-peak (drawn heavy, as a sixth line)
+    const B = makeLine({ ctrl: jagged([[82, 217], [76, 342], [66, 477], [32, 594], [8, 720], [-10, 860]], 7, 6, 3), smooth: false });
+    add(0, B, "det", 2.6);
+    // shadow faces: west of each ridge, hatched down-left to the next line over
+    hatchFace(add, L, [0, B], 0, [-0.5, 1], { s0: 0.25, seed: 11, step: 1.8, wid: 1, maxLen: 200, facets: 0.28 });
+    hatchFace(add, L, 2, B, [-0.4, 1], { seed: 12, step: 1.8, wid: 1, maxLen: 260, facets: 0.3, fade: 0.3 });
+    hatchFace(add, L, 3, 2, [-0.42, 1], { seed: 13, step: 2.2, wid: 0.95, maxLen: 110, facets: 0.3 });
+    hatchFace(add, L, 4, 3, [-0.42, 1], { seed: 14, step: 2.2, wid: 0.95, maxLen: 90, facets: 0.28 });
+    hatchFace(add, L, 1, 4, [-0.42, 1], { s0: 0.55, s1: 0.78, seed: 15, step: 2.4, wid: 0.9, maxLen: 70 });
+    hatchFace(add, L, 1, 3, [-0.45, 1], { s0: 0.04, s1: 0.4, seed: 16, step: 2.6, wid: 0.85, maxLen: 50, density: 0.8 });
+    hatchFace(add, L, 2, B, [-0.62, 1], { seed: 17, step: 3.4, wid: 0.7, maxLen: 140, density: 0.55, tone: "tex" }); // a cross-angled pass
+    // the summit block: dark hatching under the left skyline, down to the notch ridge
+    hatchFace(add, L, 0, 3, [0.35, 1], { s0: 0.01, s1: 0.2, seed: 18, step: 2.2, wid: 0.9, maxLen: 70 });
+    // sunlit snow on the east faces
+    dashes(add, L, 2, 3, 2, 70, 21);
+    dashes(add, L, 3, 4, 3, 60, 22);
+    dashes(add, L, 4, 1, 4, 40, 23);
+    // rock steps along the crests: short dark ticks just under each line
+    const r = rng(31);
+    for (const k of [0, 1, 3, 4]) for (let i = 8; i < N - 8; i += 7 + Math.floor(r() * 9)) {
+      const q = L[k][i], n = 6 + r() * 10;
+      if (q[1] > 640) continue;
+      add(k, [[q[0] - 1, q[1] + 2], [q[0] - n * 0.45, q[1] + n]], "det", 0.9);
+      add(k, [[q[0] + 3, q[1] + 3], [q[0] - n * 0.25, q[1] + n * 0.8]], "det", 0.7);
+    }
+    // short spurs off the ridges, each with a hatched shadow under it
     const sr = rng(51);
-    for (const [k, s0] of [[2, 0.18], [2, 0.42], [3, 0.2], [3, 0.46], [3, 0.7], [4, 0.25], [4, 0.55], [1, 0.3], [1, 0.62]]) {
-      const q = L[k][Math.round(s0 * (N - 1))], len = 40 + sr() * 50, ang = 0.55 + sr() * 0.35;
-      const spur = jagged([q, [q[0] + Math.cos(ang) * len * (k === 1 ? -0.6 : 1), q[1] + Math.sin(ang) * len]], 60 + k * 7 + s0 * 100, 4, 3);
+    for (const [k, s0] of [[2, 0.3], [3, 0.22], [3, 0.5], [4, 0.3], [1, 0.45]]) {
+      const q = L[k][Math.round(s0 * (N - 1))], len = 30 + sr() * 36, ang = 0.6 + sr() * 0.3;
+      const spur = jagged([q, [q[0] + Math.cos(ang) * len, q[1] + Math.sin(ang) * len]], 60 + k * 7 + s0 * 100, 4, 3);
       add(k, spur, "det", 1.1);
-      for (let t = 0.1; t < 0.95; t += 0.07) {
-        const a = [lerp(spur[0][0], spur[spur.length - 1][0], t), lerp(spur[0][1], spur[spur.length - 1][1], t)], h = 8 + sr() * 22 * (1 - t);
-        add(k, [[a[0] - 1, a[1] + 2], [a[0] - h * 0.45, a[1] + h]], "det", 0.8);
+      for (let t = 0.1; t < 0.95; t += 0.08) {
+        const a = [lerp(spur[0][0], spur[spur.length - 1][0], t), lerp(spur[0][1], spur[spur.length - 1][1], t)], h = 8 + sr() * 18 * (1 - t);
+        add(k, [[a[0] - 1, a[1] + 2], [a[0] - h * 0.4, a[1] + h]], "det", 0.8);
       }
     }
-    // sunlit snow: sparse dashes on the faces east of each ridge
-    dashes(add, L, 2, 3, 3, 70, 21);
-    dashes(add, L, 3, 4, 4, 60, 22);
-    dashes(add, L, 4, 1, 1, 50, 23);
-    // rock steps along the ridges: short dark ticks just under each crest
-    const r = rng(31);
-    for (const k of [1, 3, 4]) for (let i = 8; i < N - 8; i += 7 + Math.floor(r() * 9)) {
-      const q = L[k][i], n = 6 + r() * 10;
-      add(k, [[q[0] - 1, q[1] + 2], [q[0] - n * 0.5, q[1] + n]], "det", 0.9);
-      add(k, [[q[0] + 3, q[1] + 3], [q[0] - n * 0.3, q[1] + n * 0.8]], "det", 0.7);
-    }
-    // a dark couloir near the summit, and cornice ticks on the summit ridge
-    for (let k = 0; k < 14; k++) add(2, [[198 - k * 1.2, 150 + k * 7], [184 - k * 1.6, 168 + k * 7]], "det", 0.8);
-    for (let k = 0; k < 6; k++) add(1, [[212 + k * 4, 126 + k * 7], [214 + k * 4, 134 + k * 7]], "det", 0.9);
     // far ranges, pale, and a few birds
-    add(0, catmull([[0, 220], [30, 196], [56, 210], [86, 182], [120, 214]]), "pale", 1.5);
-    add(1, catmull([[290, 196], [318, 170], [344, 186], [372, 156], [404, 190]]), "pale", 1.5);
-    for (const [x, y, s] of [[300, 96, 7], [322, 84, 5], [340, 104, 4]]) add(1, vbird(x, y, s));
+    add(0, catmull([[-20, 250], [10, 226], [36, 240], [66, 212], [96, 236]]), "pale", 1.5);
+    add(1, catmull([[300, 206], [326, 182], [352, 196], [380, 166], [420, 200]]), "pale", 1.5);
+    for (const [x, y, s] of [[290, 86, 7], [312, 74, 5], [330, 94, 4]]) add(1, vbird(x, y, s));
   },
   // wide screens: lesser peaks either side, drawn the same way but lighter
   wings(L, add) {
