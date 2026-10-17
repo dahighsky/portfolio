@@ -1,5 +1,5 @@
 import { P, noise, rng, catmull } from "../geom.js";
-import { tree, vbird, arc, blob, ellipse } from "../shapes.js";
+import { palm, vbird, arc, blob, ellipse } from "../shapes.js";
 
 // A bay seen from the cliffs: tree line, dry sand, the water's edge (accent),
 // then two lines of breakers, all running off the top and bottom of the screen.
@@ -18,7 +18,10 @@ export default {
     { ctrl: col(330, 26, 25), rough: 6, seed: 25 },
   ],
   decorate(L, add) {
-    for (let s = 0.05; s < 0.98; s += 0.09) { const q = P(L[0], s); tree(q[0] - 22, q[1] + 10, 22 + ((s * 100) % 9) * 2, s * 77).forEach(t => add(0, t)); }
+    // coconut palms in a few uneven clumps along the tree line: a lone one, a pair, a three
+    for (const [s, dx, h] of [[0.07, 6, 64], [0.31, 22, 48], [0.35, -4, 74], [0.61, 14, 58], [0.66, 36, 44], [0.7, -2, 68], [0.9, 18, 52]]) {
+      const q = P(L[0], s); palm(q[0] + dx, q[1] + 16, h, s * 97 + h).forEach((t, i) => add(0, t, "det", i === 0 ? 2.4 : i < 8 ? 1.2 : 0.8)); // trunk, rings, fronds
+    }
     for (const s of [0.18, 0.42, 0.66, 0.84]) { // umbrellas from above, with towels
       const q = P(L[1], s), x = q[0] + 26, y = q[1];
       add(1, arc(x, y, 11, 0, Math.PI * 2, 18));
@@ -41,7 +44,7 @@ export default {
   // wide screens: more shore to the left, open sea to the right
   wings(L, add) {
     const R = rng(23);
-    for (let i = 0; i < 26; i++) { const x = -60 - R() * 640, y = 20 + R() * 820; tree(x, y, 18 + R() * 22, i).forEach(p => add(0, p, R() < 0.5 ? "pale" : "tex")); }
+    for (const [x, y, h] of [[-160, 140, 44], [-190, 170, 30], [-420, 380, 52], [-300, 610, 36], [-560, 700, 48], [-600, 730, 30]]) palm(x, y, h, x + y, false).forEach(p => add(0, p, "tex"));
     for (const [x, y] of [[-200, 220], [-360, 520], [-140, 700]]) { add(0, [[x - 26, y], [x, y - 20], [x + 26, y]]); add(0, [[x - 20, y], [x - 20, y + 22], [x + 20, y + 22], [x + 20, y]]); }
     for (let i = 0; i < 46; i++) { const x = 440 + R() * 420, y = R() * 860; add(4, arc(x, y, 8 + R() * 6, Math.PI * 1.1, Math.PI * 1.9, 6), "tex", 1); }
     for (const [x, y] of [[520, 160], [680, 420], [560, 680]]) { add(4, catmull([[x, y - 16], [x + 6, y - 4], [x + 6, y + 10], [x, y + 16], [x - 6, y + 10], [x - 6, y - 4], [x, y - 16]])); add(4, [[x, y + 18], [x - 4, y + 44]], "tex", 0.8); }

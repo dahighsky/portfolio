@@ -171,3 +171,26 @@ export const silverBars = (x, y, s = 1) => [...goldBar(x - 9 * s, y + 1 * s, 18 
 
 /** The commodity marks in board order: gold, silver, crude, natural gas, copper. */
 export const COMMODITIES = [(x, y, s = 1) => goldBar(x - 9 * s, y - 2 * s, 18 * s, 7 * s), silverBars, oilDrop, flame, coil];
+
+/** Coconut palm: a leaning, ringed trunk, a crown of fronds that rise, arch over and droop,
+ *  each feathered with hanging leaflets, and a cluster of coconuts. */
+export function palm(x, y, h, seed, fine = true) {
+  const r = rng(seed * 13 + 5), lean = (r() - 0.5) * 0.5 * h, out = [];
+  const trunk = Array.from({ length: 9 }, (_, i) => { const t = i / 8; return [x + lean * t * t, y - h * t]; });
+  out.push(trunk);
+  for (let i = 1; i < 8; i++) { const [tx, ty] = trunk[i]; out.push([[tx - h * 0.035, ty], [tx + h * 0.035, ty + h * 0.01]]); } // trunk rings
+  const [cx, cy] = trunk[8], n = 6 + Math.floor(r() * 4); // 6–9 fronds, so no two crowns match
+  for (let k = 0; k < n; k++) {
+    // spread across the top: outer fronds sweep low, inner ones rise first and arch over
+    const side = k / (n - 1) * 2 - 1, out_ = Math.abs(side);
+    const reach = h * (0.5 + r() * 0.2) * (0.55 + out_ * 0.6), rise = h * 0.28 * (1 - out_ * 0.9), drop = h * (0.22 + out_ * 0.3);
+    const spine = Array.from({ length: 8 }, (_, i) => { const t = i / 7; return [cx + side * reach * t, cy - rise * Math.sin(Math.PI * t * 0.8) + drop * t * t]; });
+    out.push(spine);
+    for (let i = 1; i < 7.5; i += fine ? 0.5 : 1.5) { // short leaflets all along both sides, so the frond reads as feathered
+      const a = spine[Math.floor(i)], b = spine[Math.min(7, Math.ceil(i))], f = i % 1, sx = a[0] + (b[0] - a[0]) * f, sy = a[1] + (b[1] - a[1]) * f, l = h * 0.085 * (1 - i / 9);
+      out.push([[sx, sy], [sx - side * l * 0.25 - l * 0.22, sy + l]], [[sx, sy], [sx - side * l * 0.25 + l * 0.22, sy + l]]);
+    }
+  }
+  for (const dx of [-0.05, 0.02, 0.07]) out.push(arc(cx + dx * h, cy + h * 0.05, h * 0.032, 0, Math.PI * 2, 8)); // coconuts
+  return out;
+}
