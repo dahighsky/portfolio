@@ -7,6 +7,7 @@ import { blob, arc, vbird, put, tree } from "../shapes.js";
 export default {
   id: "oss",
   title: "Open source",
+  colors: { 2: "#2a3cc0", 3: "#18306e" }, // main in ultramarine, a branch in dark blue
   lines: [
     { ctrl: [[200, 10], [140, 60], [86, 140], [72, 300], [82, 460], [130, 560], [176, 640], [182, 712], [150, 860]] },
     { ctrl: [[200, 40], [168, 92], [150, 160], [150, 284], [176, 352], [200, 392], [184, 444], [162, 506], [172, 622], [188, 712], [182, 860]] },

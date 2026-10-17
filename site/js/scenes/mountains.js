@@ -75,7 +75,7 @@ export default {
   id: "mountains",
   title: "Mountains",
   // line colours: the two skylines
-  colors: { 0: "#2a3cc0", 1: "#3d9be0" }, // ultramarine, sky blue
+  colors: { 2: "#3d9be0", 3: "#2a3cc0" }, // the ridges under the summit: sky blue (left), ultramarine (right)
   // traced from the owner's sketch: a broad massif, stepped skylines with sub-peaks
   // either side, and steep ridges falling almost straight down
   lines: [

@@ -27,6 +27,13 @@ export default {
     }
     // a soft second trail beside each contrail
     for (const k of [0, 1, 3, 4]) for (let s = 0.05; s < 0.45; s += 0.1) { const a = P(L[k], s), b = P(L[k], s + 0.07); add(k, [[a[0] + 5, a[1]], [b[0] + 5, b[1]]], "pale", 0.8); }
+    // a green airliner at the top of the green line, coming in to land along it
+    { const q = L[2][0], x = q[0], y = q[1] - 26, k = 1.9; // nose pointing down the runway
+      const P2 = pts => pts.map(([u, v]) => [x + u * k, y + v * k]);
+      add(2, P2([[0, 14], [-1.6, 10], [-2, -9], [0, -14], [2, -9], [1.6, 10], [0, 14]]), "acc", 2);     // fuselage
+      add(2, P2([[-2, 1], [-15, -4], [-15, -6], [-2, -3]]), "acc", 1.8); add(2, P2([[2, 1], [15, -4], [15, -6], [2, -3]]), "acc", 1.8); // wings
+      add(2, P2([[-1.5, -10], [-6, -13], [-6, -14.5], [0, -13]]), "acc", 1.5); add(2, P2([[1.5, -10], [6, -13], [6, -14.5], [0, -13]]), "acc", 1.5); // tailplane
+      add(2, P2([[-8, -3], [-8, 0]]), "acc", 1.6); add(2, P2([[8, -3], [8, 0]]), "acc", 1.6); } // engines
     // runway: threshold bars, centre dashes, touchdown marks, edge lights, asphalt
     const top = P(L[2], 0.12)[1];
     for (let x = 166; x <= 234; x += 8) if (Math.abs(x - 200) > 4) add(2, [[x, top + 8], [x, top + 30]], "det", 1.4);

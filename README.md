@@ -55,7 +55,7 @@ A scene is a file in `site/js/scenes/` exporting `{ id, title, lines, decorate }
   bottom in a 400×860 box. Line 2 is the accent line.
 - `decorate(L, add)`: draws the detail. `L` holds the built lines (240 points each). Call
   `add(parent, points, tone, width)` to attach a stroke to line `parent` (0–4), where `tone` is
-  `"det"`, `"tex"` (texture) or `"pale"` (distance). Each stroke melts onto its parent line
+  `"det"`, `"tex"` (texture), `"pale"` (distance) or `"acc"` (drawn in line 2's colour). Each stroke melts onto its parent line
   during a transition, so attach it to the line it visually belongs to.
 - `colors` (optional): `{ lineIndex: "#hex" }`, the colours of that scene's main lines. Unlisted
   lines are ink. With no `colors`, line 2 is the green accent. Colours blend as the lines flow
