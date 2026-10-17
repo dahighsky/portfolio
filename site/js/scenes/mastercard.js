@@ -8,6 +8,7 @@ const M0 = 412, M1 = 528; // matching stage
 export default {
   id: "mastercard",
   title: "ETL and matching",
+  colors: { 0: "#eb001b", 1: "#eb001b", 2: "#ff5f00", 3: "#f79e1b", 4: "#f79e1b" }, // Mastercard red, the orange where the circles overlap, yellow
   lines: [
     { ctrl: [[40, 0], [44, 190], [96, 320], [148, M0], [148, M1], [96, 640], [62, 860]] },
     { ctrl: [[120, 0], [122, 190], [138, 320], [151, M0], [151, M1], [138, 640], [132, 860]] },

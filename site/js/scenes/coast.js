@@ -9,6 +9,7 @@ const col = (x0, wob, seed) => Array.from({ length: 12 }, (_, i) => bay(x0 + wob
 export default {
   id: "coast",
   title: "Coast",
+  colors: { 1: "#e0a81c", 2: "#3d9be0" }, // yellow sand, sky-blue water’s edge
   lines: [
     { ctrl: col(70, 30, 21), rough: 4, seed: 21 },
     { ctrl: col(138, 16, 22), rough: 2, seed: 22 },

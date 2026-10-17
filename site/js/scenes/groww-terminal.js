@@ -26,6 +26,7 @@ const phoneEdge = side => {
 export default {
   id: "groww-terminal",
   title: "Trading terminal",
+  colors: { 0: "#00d09c", 1: "#00d09c", 3: "#5367ff", 4: "#5367ff" }, // the phone in Groww green, the terminal in Groww blue
   lines: [
     { ctrl: phoneEdge(-1), smooth: false },
     { ctrl: phoneEdge(1), smooth: false },

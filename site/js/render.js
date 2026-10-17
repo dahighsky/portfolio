@@ -24,7 +24,7 @@ export class Stage {
       d = this.paths(frame);
       if (frame.local === 0) this.cache.set(frame.k, d);
     }
-    d.mains.forEach((v, i) => this.mains[i].setAttribute("d", v));
+    d.mains.forEach((v, i) => { this.mains[i].setAttribute("d", v); this.mains[i].style.fill = frame.colors[i]; });
     for (const t of TONES) this.tones[t].setAttribute("d", d[t]);
   }
 }

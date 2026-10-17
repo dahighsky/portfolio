@@ -1,5 +1,7 @@
 import { N, rng, makeLine } from "./geom.js";
 
+export const INK = "#1f2a3d", ACCENT = "#0f7a5c";
+
 const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 2147483647; return h; };
 
 // Builds a scene definition into geometry: five lines of N points, plus detail
@@ -27,5 +29,7 @@ export function buildScene(def, { wings = false } = {}) {
   };
   def.decorate(lines, add);
   if (wings) def.wings?.(lines, add); // extra scenery for the margins of wide screens
-  return { id: def.id, title: def.title, lines, det, bullet: def.bullet };
+  // colours: { lineIndex: "#hex" } overrides; otherwise ink, with line 2 in the green accent
+  const colors = [0, 1, 2, 3, 4].map(i => def.colors?.[i] ?? (def.colors ? INK : i === 2 ? ACCENT : INK));
+  return { id: def.id, title: def.title, lines, det, bullet: def.bullet, colors };
 }

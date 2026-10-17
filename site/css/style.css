@@ -34,7 +34,6 @@ body {
 .tex  { fill: var(--ink); opacity: .32; }
 .det  { fill: var(--ink); opacity: .78; }
 .main { fill: var(--ink); }
-.accent { fill: var(--accent); }
 
 /* The story scrolls over the art. */
 main { position: relative; padding: 0 16px; }

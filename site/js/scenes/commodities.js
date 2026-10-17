@@ -11,6 +11,7 @@ const TOP = 150, ROW = 42, ROWS = 10;
 export default {
   id: "commodities",
   title: "Commodities",
+  colors: { 1: "#00d09c", 3: "#5367ff" }, // Groww green and blue
   lines: XS.map(col),
   decorate(L, add) {
     const R = rng(99);

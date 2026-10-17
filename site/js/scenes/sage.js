@@ -20,6 +20,7 @@ function card(add, cx, cy, a) {
 export default {
   id: "sage",
   title: "Expenses and cards",
+  colors: { 2: "#f0457a", 4: "#22a06b" }, // Fyle pink (the torn edge) and green (the approval chain)
   lines: [
     { ctrl: [[52, 0], [44, 200], [58, 420], [40, 640], [50, 860]] },
     { ctrl: [[RX0, 54], [RX0, 300], [RX0, 600], [RX0, 860]] },

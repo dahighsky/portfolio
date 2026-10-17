@@ -74,6 +74,8 @@ function dashes(add, L, a, b, parent, count, seed, dir = [0.55, 1]) {
 export default {
   id: "mountains",
   title: "Mountains",
+  // line colours: the two skylines
+  colors: { 0: "#2a3cc0", 1: "#3d9be0" }, // ultramarine, sky blue
   // traced from the owner's sketch: a broad massif, stepped skylines with sub-peaks
   // either side, and steep ridges falling almost straight down
   lines: [
