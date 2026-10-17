@@ -16,6 +16,25 @@ const stage = new Stage(svg);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)");
 const blocks = [...document.querySelectorAll("section.block[data-stop]")];
 
+// One docked card: move every block's card into it, show the one whose block
+// is nearest the middle of the screen, and size the dock to that card.
+const dock = document.getElementById("dock");
+const cards = blocks.map(b => {
+  const c = b.querySelector(".card");
+  b.removeAttribute("aria-labelledby");
+  dock.append(c);
+  return c;
+});
+let active = -1;
+function showCard(i) {
+  if (i !== active) {
+    cards[active]?.classList.remove("on");
+    cards[i].classList.add("on");
+    active = i;
+  }
+  dock.style.setProperty("--dock-h", cards[i].offsetHeight + "px");
+}
+
 let stops = [], shown = -1, raf = 0;
 
 function measure() {
@@ -28,6 +47,9 @@ function measure() {
 }
 
 function update() {
+  let near = 0;
+  stops.forEach((s, i) => { if (Math.abs(s.y - scrollY) < Math.abs(stops[near].y - scrollY)) near = i; });
+  if (cards.length) showCard(near);
   const p = progressAt(scrollY, stops, scenes.length);
   if (!reduce.matches) { stage.draw(frameAt(scenes, p)); return; }
   // reduced motion: no morphing, just the nearest finished scene with a soft fade

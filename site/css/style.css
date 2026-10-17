@@ -42,18 +42,33 @@ body {
 
 /* The story scrolls over the art, inside the same strip. */
 main { position: relative; width: var(--strip); margin: 0 auto; padding: 0 16px; }
-section.block {
-  min-height: 100vh; min-height: 100svh;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 0 0 12svh;
-}
-.card {
-  padding: 16px 18px; border-radius: 12px;
+/* Each block is only a scroll spacer that marks which scene sits under it.
+   The words live in one docked card that swaps content and resizes to fit. */
+main { padding-bottom: 15svh; }
+section.block { min-height: 75vh; min-height: 75svh; }
+.dock {
+  position: fixed; z-index: 2; left: 50%; transform: translateX(-50%);
+  bottom: max(16px, env(safe-area-inset-bottom));
+  width: calc(var(--strip) - 32px); height: var(--dock-h, auto);
+  border-radius: 12px; overflow: hidden;
   background: color-mix(in srgb, var(--paper) 92%, transparent);
   -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
   border: 1px solid rgba(31, 42, 61, .14);
+  transition: height .35s cubic-bezier(.3, .7, .2, 1);
 }
-.card + .card { margin-top: 12px; }
+.dock .card {
+  position: absolute; top: 0; left: 0; right: 0; padding: 16px 18px;
+  opacity: 0; visibility: hidden; transform: translateY(6px);
+  transition: opacity .25s, transform .25s, visibility 0s .25s;
+}
+.dock .card.on {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity .3s .08s, transform .3s .08s, visibility 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock, .dock .card, .dock .card.on { transition: none; }
+}
+.credit { margin-top: .8rem; font-size: .85rem; }
 h1 { font-weight: 600; font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 .6rem; }
 h2 { font-weight: 600; font-size: 1.2rem; line-height: 1.25; margin: 0 0 .4rem; }
 h3 { font-weight: 600; font-size: 1rem; margin: 0 0 .15rem; }
@@ -64,4 +79,3 @@ p:last-child { margin-bottom: 0; }
 a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 .links { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; padding: 0; margin: .9rem 0 0; list-style: none; }
-footer { width: var(--strip); margin: 0 auto; padding: 0 16px 10svh; position: relative; font-size: .9rem; }
