@@ -1,68 +1,66 @@
-# Portfolio: ln line-art POC
+# Portfolio: five lines
 
-Proves the core idea: generate line art with [fogleman/ln](https://github.com/fogleman/ln) in Go,
-export it as SVG path data, and draw it in the normal DOM, mobile first.
+A portrait, scroll-driven ink drawing. Five vertical lines flow through ten scenes, and the
+story is written over them:
+- mountains, coast and a landmark (the travel startup)
+- flights and forex
+- Groww commodities and the trading terminal
+- Mastercard's ETL matching
+- Sage (formerly Fyle) expenses
+- open source
 
-## Layout
+As you scroll, each scene's detail melts into the lines, the lines flow into the next shape, and
+the new detail grows back out. The brush style follows LingDong's
+[{Shan, Shui}*](https://github.com/LingDong-/shan-shui-inf).
 
-```
-portfolio/
-  generator/        Go program that renders the ln scenes
-    main.go         scenes: globe + flight arc, candlesticks + trend, ledger + tally,
-                    payment network + route, git commit graph
-  site/
-    index.html      mobile-first demo page (plain HTML/CSS/JS, no build step)
-    art/art.js      generated: window.LN_ART = { name: { w, h, layers } }
-    art/*.svg       generated: static previews
-```
+The design is in `docs/superpowers/specs/2026-10-17-scroll-scenes-design.md`.
 
 ## Run it
 
-1. Install Go from https://go.dev/dl (1.22 or newer).
-2. Generate the art:
-   ```
-   cd generator
-   go mod tidy
-   go run .
-   ```
-3. Open `site/index.html` in your browser. To test on your phone, serve it on your network:
-   ```
-   cd site
-   python -m http.server 8000
-   ```
-   then open `http://<your-laptop-ip>:8000` on the phone (same Wi-Fi). Use Chrome DevTools'
-   device mode for quick checks.
+ES modules need http, so serve the folder rather than opening the file:
 
-## What the POC demonstrates
+```
+python3 -m http.server 8000 -d site
+```
 
-- **Layers.** Each scene exports named layers (`grid`, `arc`, `candles`, `trend`, `sheet`, `bars`,
-  `tally`, `nodes`, `links`, `route`, `commits`, `branches`, `main`). The `DRAWN` and `FADED` sets in
-  `index.html` decide which layers draw on scroll and which fade in. CSS styles each
-  one, and JS animates them separately.
-- **Hidden lines across layers.** `occluder` wraps a shape so it blocks lines without drawing,
-  which is how the flight arc disappears behind the globe while living in its own layer.
-- **Direction of drawing.** The trend line's points are reversed in Go, so on scroll it draws
-  right to left (today first) but reads as a normal left-to-right uptrend.
-- **DOM-aware connector.** The green spine is built in JS from the live position of every
-  `.node` element and rebuilt on resize, so it follows your layout whatever the content.
-- **Scroll-drawn strokes,** with `prefers-reduced-motion` showing everything fully drawn.
-- **Light and dark mode** via CSS variables.
+Then open http://localhost:8000. To try it on your phone, use your laptop's IP on the same Wi-Fi.
 
-## Adding a new piece of art
+## Edit the words
 
-1. Write a function in `main.go` returning `fit(map[string]ln.Paths{...}, padding)`.
-2. Register it in `main()` under a name.
-3. Run `go run .`, then use `<svg class="art" data-art="yourName"></svg>` in the page and style
-   its layers in CSS.
+All copy is in `site/index.html`, one `<section class="block" data-stop="N">` per scene. `N` is
+the scene that block sits over (see the order in `site/js/scenes/index.js`). Several blocks can
+share a stop. Hero and Now both sit over the mountains.
 
-## Notes
+## Change the destination
 
-- `go.mod` has a `replace` for `golang.org/x/image` pointing at its GitHub mirror. It's harmless;
-  you can remove it if `go mod tidy` works without it on your machine.
-- Text placeholders ("Your Name", role lines) are meant to be replaced with real content.
+Edit `site/js/config.js`: the name, the landmark type and its params, and the travel copy.
 
-## Next steps
+To add a new kind of landmark:
+1. Write `site/js/landmarks/<type>.js`, exporting `(params) => ({ lines, decorate })`.
+2. Register it in `site/js/landmarks/index.js`.
+3. Name it in the config.
 
-- Place job markers along the candlestick trend line with `getPointAtLength`.
-- Rough.js for the hand-drawn final section.
-- Deploy `site/` to GitHub Pages.
+A typo in the type fails with a message listing the valid ones.
+
+## Add or change a scene
+
+A scene is a file in `site/js/scenes/` exporting `{ id, title, lines, decorate }`:
+
+- `lines`: exactly five specs, `{ ctrl: [[x, y], …], smooth?, rough?, seed? }`, running top to
+  bottom in a 400×860 box. Line 2 is the accent line.
+- `decorate(L, add)`: draws the detail. `L` holds the built lines (240 points each). Call
+  `add(parent, points, tone, width)` to attach a stroke to line `parent` (0–4), where `tone` is
+  `"det"`, `"tex"` (texture) or `"pale"` (distance). Each stroke melts onto its parent line
+  during a transition, so attach it to the line it visually belongs to.
+- Shape helpers (trees, clouds, planes, glyphs, cylinders, stamps and so on) are in
+  `site/js/shapes.js`.
+
+Register the scene in `site/js/scenes/index.js` and give it a text block in `index.html`.
+
+Keep important drawing out of the band the text cards cover (roughly y 560–735), and out of the
+mist band around y 620–690.
+
+## Deploy
+
+Pushing to `main` publishes `site/` through `.github/workflows/pages.yml`. In the repo settings,
+under Pages, set the source to "GitHub Actions".
