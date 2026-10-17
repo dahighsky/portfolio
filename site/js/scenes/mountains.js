@@ -79,19 +79,19 @@ export default {
   lines: [
     { ctrl: jagged([S, [183, 159], [161, 193], [138, 196], [134, 233], [108, 226], [82, 217], [76, 342], [45, 366], [29, 382], [16, 413], [-13, 461], [-30, 540]], 2, 6), smooth: false },
     { ctrl: jagged([S, [225, 164], [246, 212], [273, 249], [286, 276], [305, 286], [315, 270], [326, 297], [336, 329], [347, 371], [347, 424], [368, 408], [381, 371], [381, 318], [400, 339], [432, 371], [453, 413], [485, 440], [530, 476]], 3, 5), smooth: false },
-    { ctrl: jagged([[134, 233], [153, 297], [156, 371], [151, 413], [161, 504], [140, 583], [136, 700], [132, 860]], 4, 6, 3), smooth: false },
-    { ctrl: jagged([[250, 196], [236, 239], [233, 339], [238, 398], [230, 517], [224, 640], [222, 860]], 5, 6, 3), smooth: false },
-    { ctrl: jagged([[347, 424], [315, 477], [302, 530], [299, 572], [297, 640], [296, 860]], 6, 5, 3), smooth: false },
+    { ctrl: jagged([[134, 233], [136, 290], [126, 352], [108, 424], [84, 508], [52, 600], [12, 712], [-40, 860]], 4, 6, 3), smooth: false },
+    { ctrl: jagged([[250, 196], [244, 244], [246, 312], [256, 392], [274, 480], [300, 580], [334, 690], [380, 860]], 5, 6, 3), smooth: false },
+    { ctrl: jagged([[347, 424], [362, 470], [384, 528], [412, 600], [448, 690], [500, 860]], 6, 5, 3), smooth: false },
   ],
   decorate(L, add) {
     // the cliff ridge dropping from the left sub-peak (drawn heavy, as a sixth line)
-    const B = makeLine({ ctrl: jagged([[82, 217], [76, 342], [66, 477], [32, 594], [8, 720], [-10, 860]], 7, 6, 3), smooth: false });
+    const B = makeLine({ ctrl: jagged([[82, 217], [70, 300], [46, 384], [14, 468], [-26, 566], [-80, 700], [-130, 860]], 7, 6, 3), smooth: false });
     add(0, B, "det", 2.6);
     // shadow faces: west of each ridge, hatched down-left to the next line over
     hatchFace(add, L, [0, B], 0, [-0.5, 1], { s0: 0.25, seed: 11, step: 1.8, wid: 1, maxLen: 200, facets: 0.28 });
-    hatchFace(add, L, 2, B, [-0.4, 1], { seed: 12, step: 1.8, wid: 1, maxLen: 260, facets: 0.3, fade: 0.3 });
-    hatchFace(add, L, 3, 2, [-0.42, 1], { seed: 13, step: 2.2, wid: 0.95, maxLen: 110, facets: 0.3 });
-    hatchFace(add, L, 4, 3, [-0.42, 1], { seed: 14, step: 2.2, wid: 0.95, maxLen: 90, facets: 0.28 });
+    hatchFace(add, L, 2, B, [-0.55, 1], { seed: 12, step: 1.8, wid: 1, maxLen: 260, facets: 0.3, fade: 0.3 });
+    hatchFace(add, L, 3, 2, [-0.3, 1], { seed: 13, step: 2.2, wid: 0.95, maxLen: 120, facets: 0.3 });
+    hatchFace(add, L, 4, 3, [-0.2, 1], { seed: 14, step: 2.2, wid: 0.95, maxLen: 100, facets: 0.28 });
     hatchFace(add, L, 1, 4, [-0.42, 1], { s0: 0.55, s1: 0.78, seed: 15, step: 2.4, wid: 0.9, maxLen: 70 });
     hatchFace(add, L, 1, 3, [-0.45, 1], { s0: 0.04, s1: 0.4, seed: 16, step: 2.6, wid: 0.85, maxLen: 50, density: 0.8 });
     hatchFace(add, L, 2, B, [-0.62, 1], { seed: 17, step: 3.4, wid: 0.7, maxLen: 140, density: 0.55, tone: "tex" }); // a cross-angled pass
