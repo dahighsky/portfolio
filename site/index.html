@@ -3,276 +3,132 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Portfolio POC: ln line art</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --paper: #e9eef2;      /* drafting film */
-    --ink: #1d2b3a;        /* pen */
-    --ink-soft: #7c8a99;   /* construction lines */
-    --thread: #12805c;     /* the line that runs through everything */
-    --gutter: 28px;        /* where the spine lives */
-    color-scheme: light;
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper: #141a21; --ink: #dce3ea; --ink-soft: #6e7c8b; --thread: #3fbf8a;
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #141a21; --ink: #dce3ea; --ink-soft: #6e7c8b; --thread: #3fbf8a;
-    color-scheme: dark;
-  }
-  *, *::before, *::after { box-sizing: inherit; }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font: 400 1.0625rem/1.55 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  main {
-    position: relative;
-    max-width: 40rem;
-    margin: 0 auto;
-    padding: 0 20px 6rem calc(var(--gutter) + 26px);
-  }
-
-  /* The spine: one SVG over the whole column, drawn by JS between .node dots */
-  #spine {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; overflow: visible;
-  }
-  #spine path { fill: none; stroke: var(--thread); stroke-width: 1.5; stroke-linecap: round; }
-  #spine circle { fill: var(--paper); stroke: var(--thread); stroke-width: 1.5; }
-
-  section { position: relative; padding-top: 4.5rem; }
-  .node { position: absolute; left: -26px; top: 0.7em; width: 1px; height: 1px; }
-  section > .node { top: calc(4.5rem + 0.7em); }
-  h1 { position: relative; }
-
-  h1 { font-weight: 500; font-size: clamp(2.2rem, 9vw, 3.4rem); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  h2 { font-weight: 600; font-size: 1.35rem; line-height: 1.25; margin: 0 0 0.75rem; }
-  h3 { font-weight: 600; font-size: 1.05rem; margin: 0 0 0.25rem; }
-  p { margin: 0 0 1rem; max-width: 34em; }
-  .lede { font-size: 1.2rem; color: var(--ink); }
-  .quiet { color: var(--ink-soft); }
-  a { color: var(--ink); text-decoration-color: var(--thread); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-  a:focus-visible { outline: 2px solid var(--thread); outline-offset: 3px; border-radius: 2px; }
-  .links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; padding: 0; margin: 1.5rem 0 0; list-style: none; }
-
-  .hero { padding-top: 5rem; min-height: 78vh; display: flex; flex-direction: column; justify-content: center; }
-
-  .now-item { position: relative; margin-top: 2.5rem; }
-  .now-item p { margin-bottom: 0; }
-
-  /* ln art */
-  .art { display: block; width: 100%; height: auto; overflow: visible; margin: 1.5rem 0; }
-  .art path { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-  .art .grid    { stroke: var(--ink-soft); stroke-width: 0.6; opacity: 0.55; }
-  .art .sheet, .art .links, .art .branches { stroke: var(--ink-soft); stroke-width: 0.9; }
-  .art .candles, .art .bars, .art .nodes, .art .commits { stroke: var(--ink); stroke-width: 1; }
-  .art .arc, .art .trend, .art .tally, .art .route, .art .main { stroke: var(--thread); stroke-width: 2; }
-  .art .stop { fill: var(--paper); stroke: var(--thread); stroke-width: 1.5; }
-  .art text { fill: var(--ink); font: 500 26px "IBM Plex Sans", system-ui, sans-serif; }
-  .globe-wrap { max-width: 22rem; }
-  .roles .art { max-width: 24rem; margin: 0.75rem 0 0; }
-
-  .roles { list-style: none; padding: 0; margin: 0; }
-  .roles li { position: relative; margin-top: 2rem; }
-  .roles .when { color: var(--ink-soft); font-size: 0.95rem; }
-
-  footer { position: relative; margin-top: 5rem; font-size: 0.95rem; }
-</style>
+<title>Your Name</title>
+<meta name="description" content="Building the systems money moves through: travel, commodities trading, payments data, expense management.">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<main id="top">
-  <svg id="spine" aria-hidden="true"><path/></svg>
+<div id="stage" aria-hidden="true">
+  <svg viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- mist: the ink fades out in soft bands; a mask, so the paper shows through untouched -->
+      <linearGradient id="mistg" x1="0" y1="0" x2="0" y2="860" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#fff"/>
+        <stop offset=".29" stop-color="#fff"/>
+        <stop offset=".33" stop-color="#999"/>
+        <stop offset=".37" stop-color="#fff"/>
+        <stop offset=".66" stop-color="#fff"/>
+        <stop offset=".73" stop-color="#555"/>
+        <stop offset=".80" stop-color="#fff"/>
+      </linearGradient>
+      <mask id="mist" maskUnits="userSpaceOnUse" x="-50" y="-50" width="500" height="960">
+        <rect x="-50" y="-50" width="500" height="960" fill="url(#mistg)"/>
+      </mask>
+    </defs>
+    <g mask="url(#mist)">
+      <path id="pale" class="pale"/><path id="tex" class="tex"/><path id="det" class="det"/>
+      <path id="m0" class="main"/><path id="m1" class="main"/><path id="m2" class="accent"/><path id="m3" class="main"/><path id="m4" class="main"/>
+    </g>
+  </svg>
+</div>
 
-  <section class="hero">
-    <h1><span class="node"></span>Your Name</h1>
-    <p class="lede">I build the systems money moves through: expense management, card payments, trading, and now travel.</p>
-    <ul class="links">
-      <li><a href="#">GitHub</a></li>
-      <li><a href="#">X</a></li>
-      <li><a href="#">LinkedIn</a></li>
-      <li><a href="mailto:you@example.com">Email</a></li>
-    </ul>
+<main>
+  <!-- owner copy: everything in the cards below is placeholder text to replace -->
+  <section class="block" data-stop="0" aria-labelledby="name">
+    <div class="card">
+      <h1 id="name">Your Name</h1>
+      <p>I build the systems money moves through: expense management, payments data, commodities trading, and now travel.</p>
+      <ul class="links">
+        <li><a href="#">GitHub</a></li>
+        <li><a href="#">X</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="mailto:you@example.com">Email</a></li>
+      </ul>
+    </div>
   </section>
 
-  <section aria-labelledby="now">
-    <h2 id="now">Now</h2>
-    <div class="now-item">
-      <span class="node"></span>
+  <section class="block" data-stop="0" aria-labelledby="now">
+    <div class="card">
+      <h2 id="now">Now</h2>
       <h3>Exploring</h3>
       <p class="quiet">What you’re reading, the domains you want to get into, open questions you’re chewing on.</p>
-    </div>
-    <div class="now-item">
-      <span class="node"></span>
       <h3>Shipped</h3>
       <p class="quiet">Apps, repos and posts that are live, each with one line on why it exists.</p>
     </div>
   </section>
 
-  <section aria-labelledby="work">
-    <span class="node"></span>
-    <h2 id="work">Travel, as a fintech problem</h2>
-    <p class="quiet">Current startup: hotels first, then forex, then flights.</p>
-    <div class="globe-wrap">
-      <svg class="art" data-art="globe" role="img" aria-label="Wireframe globe with a flight path from Bengaluru to Dubai to London"></svg>
+  <section class="block" data-stop="1" aria-labelledby="travel">
+    <div class="card">
+      <p class="eyebrow">Now · travel startup</p>
+      <h2 id="travel">Travel, as a fintech problem</h2>
+      <p class="quiet" data-copy="coast">Hotels first, then forex, then flights.</p>
     </div>
   </section>
 
-  <section aria-labelledby="before">
-    <span class="node"></span>
-    <h2 id="before">Before this</h2>
-    <svg class="art" data-art="candles" role="img" aria-label="Candlestick chart trending upward"></svg>
-    <ul class="roles">
-      <li><span class="node"></span><h3>Groww</h3><p class="when">Trading. One line on the hardest problem you solved.</p></li>
-      <li><span class="node"></span><h3>Mastercard</h3><p class="when">Payments infrastructure. What you built, and at what scale.</p>
-        <svg class="art" data-art="network" role="img" aria-label="Network of payment nodes with one authorisation route highlighted"></svg></li>
-      <li><span class="node"></span><h3>B2B expense management startup</h3><p class="when">Where it started.</p>
-        <svg class="art" data-art="ledger" role="img" aria-label="Expense ledger in perspective with amounts rising as bars and a running tally"></svg></li>
-    </ul>
+  <section class="block" data-stop="2" aria-labelledby="destination">
+    <div class="card">
+      <h2 id="destination" data-copy="name">Destination</h2>
+      <p class="quiet" data-copy="landmark">Where the trip lands.</p>
+    </div>
   </section>
 
-  <section aria-labelledby="oss">
-    <span class="node"></span>
-    <h2 id="oss">Open source</h2>
-    <p class="quiet">The FOSS club: what you maintain, what you’ve merged upstream, who you’ve brought in.</p>
-    <svg class="art" data-art="gittree" role="img" aria-label="Commit graph with feature branches merging back into main"></svg>
+  <section class="block" data-stop="3" aria-labelledby="flights">
+    <div class="card">
+      <h2 id="flights">Flights</h2>
+      <p class="quiet">One line on what you’re building for flights.</p>
+    </div>
   </section>
 
-  <footer>
-    <span class="node"></span>
-    <p class="quiet">Line art rendered with fogleman/ln in Go, exported as SVG paths and drawn on scroll.</p>
-  </footer>
+  <section class="block" data-stop="4" aria-labelledby="forex">
+    <div class="card">
+      <h2 id="forex">Forex</h2>
+      <p class="quiet">One line on the forex product.</p>
+    </div>
+  </section>
+
+  <section class="block" data-stop="5" aria-labelledby="groww">
+    <div class="card">
+      <p class="eyebrow">Before · Groww</p>
+      <h2 id="groww">Commodities, from the ground up</h2>
+      <p class="quiet">Built Groww’s commodities trading business from zero: gold, crude oil and more.</p>
+    </div>
+  </section>
+
+  <section class="block" data-stop="6" aria-labelledby="groww-apps">
+    <div class="card">
+      <h2 id="groww-apps">Web and app</h2>
+      <p class="quiet">One line on the trading terminal and the app you shipped.</p>
+    </div>
+  </section>
+
+  <section class="block" data-stop="7" aria-labelledby="mastercard">
+    <div class="card">
+      <p class="eyebrow">Before · Mastercard · intern</p>
+      <h2 id="mastercard">Big data, matching at scale</h2>
+      <p class="quiet">ML algorithms and data pipelines, in the matching stage of an ETL pipeline: batch jobs matching records across industries and scales.</p>
+    </div>
+  </section>
+
+  <section class="block" data-stop="8" aria-labelledby="sage">
+    <div class="card">
+      <p class="eyebrow">Where it started · Sage (formerly Fyle) · intern</p>
+      <h2 id="sage">Expenses and corporate cards</h2>
+      <p class="quiet">Expense management for employees and corporate card management for the companies they work for.</p>
+    </div>
+  </section>
+
+  <section class="block" data-stop="9" aria-labelledby="oss">
+    <div class="card">
+      <h2 id="oss">Open source</h2>
+      <p class="quiet">What you maintain, what you’ve merged upstream.</p>
+    </div>
+  </section>
 </main>
 
-<script src="art/art.js"></script>
-<script>
-(() => {
-  const NS = "http://www.w3.org/2000/svg";
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-  const ART = window.LN_ART || {};
-  const DRAWN = new Set(["arc", "trend", "tally", "route", "main"]); // stroke draws on scroll
-  const FADED = new Set(["candles", "bars", "nodes", "commits"]);     // fades in with section
+<footer>
+  <p class="quiet">Drawn in the browser with five lines, after LingDong’s {Shan, Shui}*.</p>
+</footer>
 
-  // ---- 1. Mount ln art into each <svg data-art> ----
-  const drawables = []; // {el, len, start, end} scroll-drawn strokes
-  const faders = [];    // elements that fade in with their section
-
-  document.querySelectorAll("svg[data-art]").forEach(svg => {
-    const a = ART[svg.dataset.art];
-    if (!a) return;
-    svg.setAttribute("viewBox", `0 0 ${a.w} ${a.h}`);
-    for (const [name, d] of Object.entries(a.layers)) {
-      const p = document.createElementNS(NS, "path");
-      p.setAttribute("d", d);
-      p.setAttribute("class", name);
-      svg.appendChild(p);
-      if (DRAWN.has(name)) drawables.push({ el: p, host: svg });
-      if (FADED.has(name)) faders.push({ el: p, host: svg });
-    }
-    if (svg.dataset.art === "globe") addStops(svg, a);
-  });
-
-  // Hotels → forex → flights as dots placed along the arc path.
-  function addStops(svg) {
-    const arc = svg.querySelector(".arc");
-    const len = arc.getTotalLength();
-    ["Hotels", "Forex", "Flights"].forEach((label, i) => {
-      const pt = arc.getPointAtLength(len * (0.12 + i * 0.4));
-      const c = document.createElementNS(NS, "circle");
-      c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); c.setAttribute("r", 8);
-      c.setAttribute("class", "stop");
-      const t = document.createElementNS(NS, "text");
-      t.setAttribute("x", pt.x + 14); t.setAttribute("y", pt.y - 12);
-      t.textContent = label;
-      svg.append(c, t);
-      faders.push({ el: c, host: svg }, { el: t, host: svg });
-    });
-  }
-
-  drawables.forEach(d => {
-    d.len = d.el.getTotalLength();
-    d.el.style.strokeDasharray = d.len;
-  });
-
-  // ---- 2. The spine: a connector built from the live position of every .node ----
-  const main = document.querySelector("main");
-  const spine = document.querySelector("#spine");
-  const spinePath = spine.querySelector("path");
-  let spineLen = 0;
-
-  function buildSpine() {
-    spine.querySelectorAll("circle").forEach(c => c.remove());
-    const box = main.getBoundingClientRect();
-    const x = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--gutter"));
-    const ys = [...main.querySelectorAll(".node")].map(n => n.getBoundingClientRect().top - box.top);
-    if (!ys.length) return;
-    let d = `M${x} ${ys[0]}`;
-    for (let i = 1; i < ys.length; i++) {
-      // a small sideways kink between nodes so it reads as drawn, not ruled
-      const mid = (ys[i - 1] + ys[i]) / 2, k = i % 2 ? 6 : -6;
-      d += ` Q${x + k} ${mid} ${x} ${ys[i]}`;
-    }
-    spinePath.setAttribute("d", d);
-    spineLen = spinePath.getTotalLength();
-    spinePath.style.strokeDasharray = spineLen;
-    ys.forEach(y => {
-      const c = document.createElementNS(NS, "circle");
-      c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 4);
-      spine.appendChild(c);
-    });
-    update();
-  }
-
-  // ---- 3. Scroll → progress ----
-  const clamp = v => Math.min(1, Math.max(0, v));
-  function sectionProgress(el) {
-    const r = el.getBoundingClientRect(), vh = innerHeight;
-    return clamp((vh * 0.85 - r.top) / (r.height + vh * 0.25));
-  }
-
-  function update() {
-    const all = reduce.matches;
-    drawables.forEach(d => {
-      const p = all ? 1 : sectionProgress(d.host);
-      d.el.style.strokeDashoffset = d.len * (1 - p);
-    });
-    faders.forEach(f => { f.el.style.opacity = all ? 1 : clamp(sectionProgress(f.host) * 2.5); });
-
-    // spine draws down to just below the middle of the screen
-    const box = main.getBoundingClientRect();
-    const reach = all ? Infinity : innerHeight * 0.6 - box.top;
-    let lo = 0, hi = spineLen;
-    for (let i = 0; i < 18; i++) { // binary search: length at which the path reaches y = reach
-      const m = (lo + hi) / 2;
-      spinePath.getPointAtLength(m).y < reach ? (lo = m) : (hi = m);
-    }
-    spinePath.style.strokeDashoffset = spineLen - lo;
-    spine.querySelectorAll("circle").forEach(c => {
-      c.style.opacity = +c.getAttribute("cy") <= reach ? 1 : 0.25;
-    });
-  }
-
-  let raf = 0;
-  const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); };
-  addEventListener("scroll", schedule, { passive: true });
-  new ResizeObserver(buildSpine).observe(main);
-  reduce.addEventListener("change", update);
-  document.fonts?.ready.then(buildSpine);
-  buildSpine();
-})();
-</script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,66 @@
+:root {
+  --paper: #e8dcc4;
+  --frame: #d6c9ae;
+  --ink: #1f2a3d;
+  --soft: #6b6a5e;
+  --accent: #0f7a5c;
+  --strip: min(100vw, 430px);
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--frame); }
+body {
+  margin: 0;
+  background: var(--frame);
+  color: var(--ink);
+  font: 400 1rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The art: a fixed, phone-width strip of paper. On wide screens it hangs in the
+   middle like a scroll on a wall. */
+#stage {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: var(--strip); height: 100vh; height: 100svh; overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .18 0 0 0 .3 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .2' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .22 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23f)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(120, 90, 50, .18));
+  background-blend-mode: multiply;
+}
+@media (min-width: 600px) {
+  #stage { box-shadow: 0 0 0 1px #c4b494, 0 10px 50px rgba(80, 60, 30, .22); }
+}
+#stage svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .15s; }
+.pale { fill: var(--ink); opacity: .28; }
+.tex  { fill: var(--ink); opacity: .32; }
+.det  { fill: var(--ink); opacity: .78; }
+.main { fill: var(--ink); }
+.accent { fill: var(--accent); }
+
+/* The story scrolls over the art, inside the same strip. */
+main { position: relative; width: var(--strip); margin: 0 auto; padding: 0 16px; }
+section.block {
+  min-height: 100vh; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 0 12svh;
+}
+.card {
+  padding: 16px 18px; border-radius: 12px;
+  background: color-mix(in srgb, var(--paper) 84%, transparent);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  border: 1px solid rgba(31, 42, 61, .14);
+}
+.card + .card { margin-top: 12px; }
+h1 { font-weight: 600; font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 .6rem; }
+h2 { font-weight: 600; font-size: 1.2rem; line-height: 1.25; margin: 0 0 .4rem; }
+h3 { font-weight: 600; font-size: 1rem; margin: 0 0 .15rem; }
+p { margin: 0 0 .6rem; }
+p:last-child { margin-bottom: 0; }
+.quiet { color: var(--soft); }
+.eyebrow { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: .35rem; font-weight: 600; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; padding: 0; margin: .9rem 0 0; list-style: none; }
+footer { width: var(--strip); margin: 0 auto; padding: 0 16px 10svh; position: relative; font-size: .9rem; }
