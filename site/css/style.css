@@ -9,7 +9,7 @@
   color-scheme: light;
 }
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--frame); }
+html { background: var(--frame); scroll-snap-type: y proximity; }
 body {
   margin: 0;
   background: var(--frame);
@@ -45,7 +45,7 @@ main { position: relative; width: var(--strip); margin: 0 auto; padding: 0 16px;
 /* Each block is only a scroll spacer that marks which scene sits under it.
    The words live in one docked card that swaps content and resizes to fit. */
 main { padding-bottom: 15svh; }
-section.block { min-height: 75vh; min-height: 75svh; }
+section.block { min-height: 75vh; min-height: 75svh; scroll-snap-align: center; }
 .dock {
   position: fixed; z-index: 2; left: 50%; transform: translateX(-50%);
   bottom: max(16px, env(safe-area-inset-bottom));
@@ -79,3 +79,52 @@ p:last-child { margin-bottom: 0; }
 a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 .links { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; padding: 0; margin: .9rem 0 0; list-style: none; }
+
+.rod { display: none; }
+
+/* Desktop: the art becomes a mounted hanging scroll sized to the window's
+   height, with the words beside it in the margin rather than over the ink. */
+@media (min-width: 900px) and (min-aspect-ratio: 1/1) {
+  :root {
+    --m: clamp(36px, 7vh, 80px);                       /* wall margin above and below */
+    --art-h: calc(100vh - 2 * var(--m));
+    --art-w: calc(var(--art-h) * 400 / 860);
+    --gap: clamp(48px, 6vw, 120px);
+    --card-w: clamp(320px, 28vw, 420px);
+    --left: calc(50% - (var(--art-w) + var(--gap) + var(--card-w)) / 2);
+  }
+  body {
+    background:
+      radial-gradient(ellipse 70% 60% at 42% 38%, rgba(255, 250, 238, .55), transparent 70%),
+      var(--frame);
+    background-attachment: fixed;
+  }
+  #stage {
+    top: var(--m); left: var(--left); transform: none;
+    width: var(--art-w); height: var(--art-h);
+    box-shadow:
+      0 0 0 12px #cdb994,                               /* silk mount */
+      0 0 0 13px #a8956f,
+      0 24px 60px 8px rgba(70, 50, 25, .28);
+  }
+  .rod {
+    display: block; position: fixed; z-index: 1;
+    left: calc(var(--left) - 30px); width: calc(var(--art-w) + 60px); height: 14px;
+    border-radius: 7px;
+    background: linear-gradient(#7a5a3a, #4e3722 60%, #3b2918);
+    box-shadow: 0 3px 8px rgba(40, 25, 10, .35);
+  }
+  .rod.top { top: calc(var(--m) - 26px); }
+  .rod.bottom { top: calc(var(--m) + var(--art-h) + 12px); }
+  .dock {
+    left: calc(var(--left) + var(--art-w) + var(--gap)); width: var(--card-w);
+    top: 50%; bottom: auto; transform: translateY(-50%);
+    background: color-mix(in srgb, var(--paper) 70%, transparent);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: 0 8px 30px rgba(70, 50, 25, .12);
+  }
+  .dock .card { padding: 24px 26px; }
+  h1 { font-size: clamp(2.4rem, 3.4vw, 3.4rem); }
+  h2 { font-size: 1.45rem; }
+  .dock .card p { font-size: 1.05rem; }
+}
