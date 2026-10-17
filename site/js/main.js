@@ -4,6 +4,7 @@ import { buildStops, progressAt } from "./scroll.js";
 import { Stage } from "./render.js";
 import { SCENES } from "./scenes/index.js";
 import { DESTINATION } from "./config.js";
+import { Words } from "./words.js";
 
 for (const el of document.querySelectorAll("[data-copy]")) {
   const key = el.dataset.copy, text = key === "name" ? DESTINATION.name : DESTINATION.copy[key];
@@ -18,7 +19,7 @@ const svg = document.querySelector("#stage svg");
 const wideMQ = matchMedia("(min-width: 900px) and (min-aspect-ratio: 1/1)");
 const stage = new Stage(svg);
 const built = {};
-let scenes;
+let scenes, view, words;
 function useLayout() {
   // Widen the canvas to the window's shape whenever the window is wider than the
   // drawing (tablets, laptops), and fill those margins with each scene's wings.
@@ -27,7 +28,10 @@ function useLayout() {
   built[key] ??= SCENES.map(d => buildScene(d, { wings }));
   scenes = built[key];
   const focus = wideMQ.matches ? 0.6 : 0.5; // wide screens: the card is on the left, so the scene sits right of centre
-  svg.setAttribute("viewBox", `${(200 - focus * w).toFixed(1)} 0 ${w.toFixed(1)} 860`);
+  view = { x: 200 - focus * w, w };
+  svg.setAttribute("viewBox", `${view.x.toFixed(1)} 0 ${w.toFixed(1)} 860`);
+  document.body.classList.toggle("words", wideMQ.matches);
+  words?.hide();
   stage.cache.clear();
 }
 useLayout();
@@ -43,6 +47,15 @@ const cards = blocks.map(b => {
   dock.append(c);
   return c;
 });
+// On wide screens the same words are drawn into the scene instead (words.js).
+const content = cards.map(c => ({
+  eyebrow: c.querySelector(".eyebrow")?.textContent ?? "",
+  title: c.querySelector("h1, h2").textContent,
+  lede: c.querySelector(":scope > p:not(.eyebrow):not(.credit)")?.innerHTML ?? "",
+  items: [...c.querySelectorAll("li")].map(e => ({ html: e.innerHTML })),
+}));
+words = new Words(svg, "fonts/EMSAllure.svg");
+
 let active = -1;
 function showCard(i) {
   if (i !== active) {
@@ -69,6 +82,11 @@ function update() {
   stops.forEach((s, i) => { if (Math.abs(s.y - scrollY) < Math.abs(stops[near].y - scrollY)) near = i; });
   if (cards.length) showCard(near);
   const p = progressAt(scrollY, stops, scenes.length);
+  if (wideMQ.matches && cards.length) {
+    // write the words only while the scene is at rest; clear them as it starts to change
+    if (Number.isInteger(p)) words.show(near, content[near], scenes[p].anchors, view, reduce.matches);
+    else words.hide();
+  }
   if (!reduce.matches) { stage.draw(frameAt(scenes, p)); return; }
   // reduced motion: no morphing, just the nearest finished scene with a soft fade
   const k = Math.round(p);

@@ -47,4 +47,5 @@ export default {
     add(4, blob(760, 300, 40, 18, 7), "pale", 1.4); add(4, blob(820, 560, 26, 12, 9), "pale", 1.4);
     add(4, vbird(560, 60)); add(4, vbird(590, 48, 5)); add(0, vbird(-300, 80));
   },
+  anchors: L => [0.18, 0.42, 0.66, 0.84].map(s => { const q = P(L[1], s); return [q[0] + 26, q[1]]; }),
 };

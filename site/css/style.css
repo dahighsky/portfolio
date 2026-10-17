@@ -88,3 +88,24 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   h2 { font-size: 1.4rem; }
   .dock .card p { font-size: 1.05rem; }
 }
+
+/* Wide screens: the words are drawn into the scene (js/words.js). The docked card
+   stays in the page for screen readers and keyboard users, visible only on focus. */
+body.words .dock:not(:focus-within) {
+  clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; border: 0; padding: 0;
+}
+#words { opacity: 0; transition: opacity .3s; }
+#words.on { opacity: 1; }
+#words .hand { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+#words .eyebrow-w { fill: var(--accent-text); font: 600 13px/1 system-ui, -apple-system, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+#words .leader { fill: none; stroke: var(--ink); stroke-width: .9; opacity: .55; }
+#words .pin { fill: var(--paper); stroke: var(--accent); stroke-width: 1.6; }
+#words .label { opacity: 0; animation: label-in .45s ease-out both; }
+#words .label-text { font: 400 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); padding: 4px 0 0; }
+#words .label-text a { color: var(--ink); }
+#words .lede-text { font: 400 19px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--soft); }
+@keyframes label-in { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { #words .label { animation: none; opacity: 1; } }
+.points { margin: .2rem 0 0; padding-left: 1.1rem; }
+.points li { margin: .15rem 0; }
+.points li::marker { color: var(--accent); }

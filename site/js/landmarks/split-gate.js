@@ -64,5 +64,6 @@ export default function splitGate({ tiers = 4 } = {}) {
     put(add, 4, [[[740, 600], [800, 560], [860, 600]], [[750, 600], [750, 660], [850, 660], [850, 600]], [[790, 660], [790, 630], [810, 630], [810, 660]]], "det", 1.1);
     add(0, catmull([[-700, 220], [-560, 140], [-500, 130], [-380, 230]]), "pale", 1.6);
   }
-  return { lines, decorate, wings };
+  const anchors = L => [L[0][0], L[3][0], P(L[2], 0.3)];
+  return { lines, decorate, wings, anchors };
 }
