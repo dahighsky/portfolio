@@ -4,5 +4,6 @@ import coast from "./coast.js";
 import landmark from "./landmark.js";
 import flights from "./flights.js";
 import forex from "./forex.js";
+import growwCommodities from "./groww-commodities.js";
 
-export const SCENES = [mountains, coast, landmark, flights, forex];
+export const SCENES = [mountains, coast, landmark, flights, forex, growwCommodities];
