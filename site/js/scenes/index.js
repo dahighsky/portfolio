@@ -6,5 +6,6 @@ import flights from "./flights.js";
 import forex from "./forex.js";
 import growwCommodities from "./groww-commodities.js";
 import growwTerminal from "./groww-terminal.js";
+import mastercard from "./mastercard.js";
 
-export const SCENES = [mountains, coast, landmark, flights, forex, growwCommodities, growwTerminal];
+export const SCENES = [mountains, coast, landmark, flights, forex, growwCommodities, growwTerminal, mastercard];
