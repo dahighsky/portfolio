@@ -10,22 +10,24 @@ for (const el of document.querySelectorAll("[data-copy]")) {
   if (text) el.textContent = text;
 }
 
-// One drawing for every screen. Phones show the 400×860 scene as drawn; wide
-// screens widen the canvas to the window's shape, with the scene a little right
-// of centre (the text sits on the left) and extra scenery drawn in the margins.
+// One drawing for every screen, always edge to edge. Phones show the 400×860
+// scene as drawn; wider screens widen the canvas to the window's shape and draw
+// extra scenery in the margins. On wide screens the scene sits right of centre
+// because the text card moves to the left.
 const svg = document.querySelector("#stage svg");
 const wideMQ = matchMedia("(min-width: 900px) and (min-aspect-ratio: 1/1)");
 const stage = new Stage(svg);
 const built = {};
 let scenes;
 function useLayout() {
-  const wide = wideMQ.matches, key = wide ? "wide" : "tall";
-  built[key] ??= SCENES.map(d => buildScene(d, { wings: wide }));
+  // Widen the canvas to the window's shape whenever the window is wider than the
+  // drawing (tablets, laptops), and fill those margins with each scene's wings.
+  const w = Math.max(400, 860 * innerWidth / innerHeight), wings = w > 420;
+  const key = wings ? "wings" : "plain";
+  built[key] ??= SCENES.map(d => buildScene(d, { wings }));
   scenes = built[key];
-  if (wide) {
-    const w = 860 * innerWidth / innerHeight;
-    svg.setAttribute("viewBox", `${(200 - 0.6 * w).toFixed(1)} 0 ${w.toFixed(1)} 860`);
-  } else svg.setAttribute("viewBox", "0 0 400 860");
+  const focus = wideMQ.matches ? 0.6 : 0.5; // wide screens: the card is on the left, so the scene sits right of centre
+  svg.setAttribute("viewBox", `${(200 - focus * w).toFixed(1)} 0 ${w.toFixed(1)} 860`);
   stage.cache.clear();
 }
 useLayout();
@@ -79,7 +81,7 @@ function update() {
 
 const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); };
 addEventListener("scroll", schedule, { passive: true });
-addEventListener("resize", () => { if (wideMQ.matches) useLayout(); measure(); });
+addEventListener("resize", () => { useLayout(); measure(); });
 new ResizeObserver(measure).observe(document.querySelector("main"));
 document.fonts?.ready.then(measure);
 reduce.addEventListener("change", () => { shown = -1; svg.style.opacity = 1; update(); });
