@@ -84,7 +84,7 @@ function update() {
   const p = progressAt(scrollY, stops, scenes.length);
   if (wideMQ.matches && cards.length) {
     // write the words only while the scene is at rest; clear them as it starts to change
-    if (Number.isInteger(p)) words.show(near, content[near], scenes[p].anchors, view, reduce.matches);
+    if (Number.isInteger(p)) words.show(near, content[near], scenes[p].bullet, view, reduce.matches);
     else words.hide();
   }
   if (!reduce.matches) { stage.draw(frameAt(scenes, p)); return; }

@@ -1,5 +1,5 @@
 import { P, noise, rng, catmull } from "../geom.js";
-import { tree, vbird, arc, blob } from "../shapes.js";
+import { tree, vbird, arc, blob, ellipse } from "../shapes.js";
 
 // A bay seen from the cliffs: tree line, dry sand, the water's edge (accent),
 // then two lines of breakers, all running off the top and bottom of the screen.
@@ -47,5 +47,5 @@ export default {
     add(4, blob(760, 300, 40, 18, 7), "pale", 1.4); add(4, blob(820, 560, 26, 12, 9), "pale", 1.4);
     add(4, vbird(560, 60)); add(4, vbird(590, 48, 5)); add(0, vbird(-300, 80));
   },
-  anchors: L => [0.18, 0.42, 0.66, 0.84].map(s => { const q = P(L[1], s); return [q[0] + 26, q[1]]; }),
+  bullet: (x, y) => [ellipse(x, y, 4.5, 12, 0, Math.PI * 2, 18).map(([px, py]) => [x + (px - x) * 0.94 + (py - y) * 0.34, y + (py - y) * 0.94 - (px - x) * 0.34]), [[x - 3.4, y + 8], [x + 3.4, y - 8]]], // a surfboard
 };

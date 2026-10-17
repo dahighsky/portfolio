@@ -65,5 +65,5 @@ export default {
     for (let i = 0; i < 4; i++) put(add, 4, coin(560, 736 - i * 5, 11), "det", 1);
     put(add, 0, glyph("€", -400, 200, 3), "pale", 1.4); put(add, 0, glyph("₹", -200, 380, 2.6), "pale", 1.4);
   },
-  anchors: () => [[334, 214], [334, 340], [334, 466], [90, 724]],
+  bullet: (x, y) => [ellipse(x, y, 9, 9), ellipse(x, y, 6, 6), ...glyph("₹", x - 3, y - 4, 0.6)],
 };

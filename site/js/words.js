@@ -11,8 +11,8 @@ const el = (tag, attrs = {}, parent) => {
 const d = pts => "M" + pts.map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L");
 
 // The words as part of the drawing (wide screens): each block's title is written
-// in brush strokes in the empty left of the canvas, and its bullets become labels
-// in the right margin, each tied by a leader line to something in the scene.
+// in brush strokes in the empty left of the canvas, with its bullets listed under
+// it, each marked with the scene's own small ink bullet (a pine, a surfboard, …).
 export class Words {
   constructor(svg, fontUrl) {
     this.g = el("g", { id: "words", "aria-hidden": "true" }, svg);
@@ -26,9 +26,9 @@ export class Words {
     this.g.classList.remove("on");
   }
 
-  // block: { eyebrow, title, lede, items: [{ html }] }; anchors: [x, y][] in scene units;
-  // vb: { x, w } of the current viewBox; instant: skip the writing animation.
-  async show(key, block, anchors, vb, instant) {
+  // block: { eyebrow, title, lede, items: [{ html }] }; bullet: (x, y) => polylines, the
+  // scene's bullet mark; vb: { x, w } of the current viewBox; instant: skip the writing.
+  async show(key, block, bullet, vb, instant) {
     if (this.key === key) return;
     this.key = key;
     const font = await this.font;
@@ -36,19 +36,24 @@ export class Words {
     this.g.replaceChildren();
     this.g.classList.add("on");
 
-    // title: wrapped to the left margin, written stroke by stroke
-    const left = vb.x + vb.w * 0.06, width = Math.min(-left - 40, vb.w * 0.34), size = 78, lh = size * 0.86;
+    // one column in the empty left of the canvas: eyebrow, title, subtitle, bullets
+    const left = vb.x + vb.w * 0.06, width = Math.min(-left - 40, vb.w * 0.34), size = 72, lh = size * 0.86;
     const lines = wrap(font, block.title, size, width);
-    let y = 330 - (lines.length - 1) * lh / 2;
-    if (block.eyebrow) el("text", { x: left, y: y - size * 0.75, class: "eyebrow-w" }, this.g).textContent = block.eyebrow;
+    const textH = (html, px, w) => Math.ceil(html.replace(/<[^>]+>/g, "").length * px * 0.5 / w) * px * 1.45;
+    const ledeH = block.lede ? textH(block.lede, 19, width) + 18 : 0;
+    const itemW = width - 34, itemHs = block.items.map(it => textH(it.html, 17, itemW) + 12);
+    const total = (block.eyebrow ? 26 : 0) + lines.length * lh + ledeH + (itemHs.length ? 22 : 0) + itemHs.reduce((a, b) => a + b, 0);
+    let y = Math.max(70, 430 - total / 2) + (block.eyebrow ? 26 : 0) + size * 0.7;
+    if (block.eyebrow) el("text", { x: left, y: y - size * 0.82, class: "eyebrow-w" }, this.g).textContent = block.eyebrow;
+
+    // title, written stroke by stroke as a pen line, each stroke then inked with the brush taper
     const paths = [];
     for (const line of lines) {
       for (const s of strokes(font, line, left, y, size)) if (s.length > 1) { const p = el("path", { d: d(s), class: "hand" }, this.g); p.pts = s; paths.push(p); }
       y += lh;
     }
-    // each stroke is written as a pen line, then swapped for its tapered brush shape
     const ink = (p, i) => p.replaceWith(el("path", { d: brush(p.pts, 4.4, i), class: "inked" }));
-    const total = paths.reduce((t, p) => t + p.getTotalLength(), 0), speed = Math.max(total / 1600, 0.6); // ≤ 1.6s per title
+    const totalLen = paths.reduce((t, p) => t + p.getTotalLength(), 0), speed = Math.max(totalLen / 1600, 0.6); // ≤ 1.6s
     let at = 0;
     for (const p of paths) {
       const len = p.getTotalLength();
@@ -62,34 +67,20 @@ export class Words {
       at += len;
     }
     const written = instant ? 0 : at / speed;
-    if (block.lede) { // a typeset line under the title
-      const fo = el("foreignObject", { x: left, y: y - lh + size * 0.42, width, height: 160, class: "label" }, this.g);
-      const div = document.createElement("div");
-      div.className = "lede-text"; div.innerHTML = block.lede; fo.append(div);
-      fo.style.animationDelay = written + "ms";
-    }
+    y += size * 0.1 - lh;
 
-    // bullets: a column in the right margin, ordered to match their anchors, with leaders
-    const colX = 432, colW = Math.min(320, vb.x + vb.w - colX - 32), items = block.items.slice(0, anchors.length || block.items.length);
-    if (colW < 120) return;
-    const order = items.map((it, i) => ({ it, a: anchors[i] })).sort((p, q) => (p.a?.[1] ?? 0) - (q.a?.[1] ?? 0));
-    // each label's height from its length (≈ 7.6 units per character at 15px), so long ones don't collide
-    const hOf = it => 24 + 21 * Math.ceil(it.html.replace(/<[^>]+>/g, "").length * 7.6 / colW), ys = [];
-    order.forEach(({ a, it }, i) => ys.push(Math.max(a ? a[1] - 18 : 300 + i * 70, i ? ys[i - 1] + hOf(order[i - 1].it) + 14 : 90)));
-    const over = ys.length ? ys[ys.length - 1] + hOf(order[order.length - 1].it) - 830 : 0;
-    if (over > 0) for (let i = 0; i < ys.length; i++) ys[i] -= over;
-    order.forEach(({ it, a }, i) => {
-      const g = el("g", { class: "label" }, this.g), ly = ys[i];
-      if (a) {
-        el("circle", { cx: a[0], cy: a[1], r: 3.5, class: "pin" }, g);
-        el("path", { d: d([a, [colX - 46, ly + 16], [colX - 8, ly + 16]]), class: "leader" }, g);
-      }
-      const fo = el("foreignObject", { x: colX, y: ly, width: colW, height: hOf(it) + 10 }, g);
-      const div = document.createElement("div");
-      div.className = "label-text";
-      div.innerHTML = it.html;
-      fo.append(div);
-      g.style.animationDelay = (written + i * 140) + "ms";
+    const fo = (x, top, w, h, cls, html, delay) => {
+      const g = el("g", { class: "label" }, this.g), f = el("foreignObject", { x, y: top, width: w, height: h + 8 }, g);
+      const div = document.createElement("div"); div.className = cls; div.innerHTML = html; f.append(div);
+      g.style.animationDelay = delay + "ms";
+      return g;
+    };
+    if (block.lede) { fo(left, y + 8, width, ledeH, "lede-text", block.lede, written); y += ledeH; }
+    y += itemHs.length ? 22 : 0;
+    block.items.forEach((it, i) => {
+      const g = fo(left + 34, y, itemW, itemHs[i], "label-text", it.html, written + 120 + i * 140);
+      if (bullet) for (const [k, poly] of bullet(left + 12, y + 13).entries()) el("path", { d: brush(poly, 1.7, k + i), class: "inked" }, g);
+      y += itemHs[i];
     });
   }
 }

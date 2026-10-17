@@ -27,5 +27,5 @@ export function buildScene(def, { wings = false } = {}) {
   };
   def.decorate(lines, add);
   if (wings) def.wings?.(lines, add); // extra scenery for the margins of wide screens
-  return { id: def.id, title: def.title, lines, det, anchors: def.anchors?.(lines) ?? [] };
+  return { id: def.id, title: def.title, lines, det, bullet: def.bullet };
 }

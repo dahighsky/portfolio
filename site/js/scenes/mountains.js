@@ -60,6 +60,6 @@ export default {
     for (const x of [460, 640, 820]) tree(x, 712, 46, x).forEach(p => add(4, p));
     for (const [x, y, s] of [[-300, 120, 7], [-270, 108, 5], [620, 90, 7]]) add(x < 0 ? 0 : 4, vbird(x, y, s));
   },
-  // what bullets point at (wide screens), in order
-  anchors: L => [P(L[2], 0.62).map((v, i) => v + [-70, -40][i]), P(L[2], 0.88).map((v, i) => v + [40, -6][i]), P(L[3], 0.5), [350, 150], P(L[1], 0.25), P(L[0], 0.3)],
+  // the bullet mark for this scene's points (wide screens)
+  bullet: (x, y) => pine(x, y + 11, 22),
 };

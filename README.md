@@ -36,8 +36,8 @@ On wide screens the words are drawn into the scene instead of shown in a card:
   comes to rest.
 - The eyebrow sits above the title.
 - A direct `<p>` in the card becomes a subtitle.
-- Each `<li>` becomes a label in the right margin, tied by a leader line to the scene's
-  `anchors`, in order.
+- The `<li>` items are listed under the title, each marked with the scene's own small ink
+  bullet: a pine, a surfboard, a coin, a candlestick and so on.
 
 Keep bullets short (one line reads best). The handwriting font is EMS Felix (SIL Open Font
 License), in `site/fonts/`.
@@ -63,8 +63,8 @@ A scene is a file in `site/js/scenes/` exporting `{ id, title, lines, decorate }
   `add(parent, points, tone, width)` to attach a stroke to line `parent` (0–4), where `tone` is
   `"det"`, `"tex"` (texture) or `"pale"` (distance). Each stroke melts onto its parent line
   during a transition, so attach it to the line it visually belongs to.
-- `anchors(L)` (optional): the `[x, y]` points that a block's bullets point at on wide screens, in
-  bullet order.
+- `bullet(x, y)` (optional): the scene's bullet mark for wide screens. It returns polylines
+  centred on (x, y), about 24 units across.
 - `wings(L, add)` (optional): extra scenery for wide screens only. There the canvas widens to the
   window's shape, with the scene a little right of centre and the text on the left. Draw into
   x < 0 (keep it sparse, it sits under the text) and x > 400. Phones never build it.
